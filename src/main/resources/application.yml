@@ -4,3 +4,15 @@ spring:
     url: jdbc:mysql://3.34.77.175:3306/imongjeomong?serverTimezone=Asia/Seoul
     username: mong
     password: mong1q2w
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: update
+
+openData:
+  serviceKey: HGWbiXI4puxU2CzKvcLxn5CesxFWEHG%2F49E1OBVZH4N3flzq0q%2B442V4Ii2Bk43fuLm0jmkitNv5Qaxxb1U6ag%3D%3D
+
