@@ -1,31 +1,41 @@
 package com.imongjeomong.imongjeomongserver.opendata.tasu;
 
 import com.google.gson.*;
+import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@EnableTransactionManagement
 public class TasuService {
 
     private final String tasuOpenDataUrl = "https://apis.data.go.kr/6300000/openapi2022/tasuInfo/gettasuInfo";
+    private final TasuRepository tasuRepository;
 
     @Value("${openData.serviceKey}")
     private String serviceKey;
     private final OkHttpClient client = new OkHttpClient();
 
+    /**
+     * jpa bulk insert를 빠르게 하는 방법이 필요
+     * 현재는 200개의 insert가 있다면 200번의 쿼리가 발생
+     */
+    @Transactional
     public void saveTasuInfo() throws UnsupportedEncodingException {
-        // https://apis.data.go.kr/6300000/openapi2022/tasuInfo/gettasuInfo?serviceKey={serviceKey}&pageNo=1&numOfRows={numOfRows}
-        String serviceKey = "HGWbiXI4puxU2CzKvcLxn5CesxFWEHG%2F49E1OBVZH4N3flzq0q%2B442V4Ii2Bk43fuLm0jmkitNv5Qaxxb1U6ag%3D%3D";
-        String requestUrl = tasuOpenDataUrl + "?serviceKey=" + serviceKey + "&pageNo=1&numOfRows=1";
+        // 기존 데이터 제거
+        tasuRepository.deleteAll();
 
         // tasu 데이터 total count 가져오기
         int count = getTasuTotalCount();
@@ -35,7 +45,9 @@ public class TasuService {
 
 
         // 불러온 모든 tasu 데이터를 db에 저장하기
-
+        for (int i = 0; i < tasuInfo.size(); i++) {
+            tasuRepository.save(tasuInfo.get(i));
+        }
     }
 
     /**
@@ -83,20 +95,25 @@ public class TasuService {
                     .getAsJsonObject("response")
                     .getAsJsonObject("body").getAsJsonArray("items");
 
-            System.out.println(array.toString());
             System.out.println("array.size() = " + array.size());
 
             List<Tasu> tasuList = new ArrayList<>();
             for (int i = 0; i < array.size(); i++) {
                 Tasu tasu = new Tasu();
 
+                // lat, lng, kioskId, address
+                tasu.setLat(Double.parseDouble(array.get(i).getAsJsonObject().get("laCrdnt").getAsString()));
+                tasu.setLng(Double.parseDouble(array.get(i).getAsJsonObject().get("loCrdnt").getAsString()));
+                tasu.setAddress(array.get(i).getAsJsonObject().get("adres").getAsString());
+                tasu.setKioskId(array.get(i).getAsJsonObject().get("kioskId").getAsString());
+
+                tasuList.add(tasu);
             }
 
+            return tasuList;
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
-        return null;
     }
 }
