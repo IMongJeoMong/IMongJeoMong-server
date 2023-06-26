@@ -24,7 +24,7 @@ public class TasuService {
     private final String tasuOpenDataUrl = "https://apis.data.go.kr/6300000/openapi2022/tasuInfo/gettasuInfo";
     private final TasuRepository tasuRepository;
 
-    @Value("${openData.serviceKey}")
+    @Value("${openData.tasu.serviceKey}")
     private String serviceKey;
     private final OkHttpClient client = new OkHttpClient();
 
