@@ -1,6 +1,8 @@
 package com.imongjeomong.imongjeomongserver.util;
 
 import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
+import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.member.model.service.MemberServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -23,82 +25,70 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-//    private final MemberServiceImpl memberService;
-//    private static final String SALT = "songleejeonjeong";
-//
-//    public String createAccessToken(String userId) {
-//        LocalDateTime currentTime = LocalDateTime.now();
-//        LocalDateTime expirationTime = currentTime.plus(30, ChronoUnit.MINUTES);
-//        ZoneId zoneId = ZoneId.systemDefault();
-//        ZonedDateTime zonedDateTime = expirationTime.atZone(zoneId);
-//        Date expirationDate = Date.from(zonedDateTime.toInstant());
-//        return create(userId, "access-token", expirationDate);
-//    }
-//
-//    public String createRefreshToken(String userId) {
-//        LocalDateTime currentTime = LocalDateTime.now();
-//        LocalDateTime expirationTime = currentTime.plus(1, ChronoUnit.DAYS);
-//        ZoneId zoneId = ZoneId.systemDefault();
-//        ZonedDateTime zonedDateTime = expirationTime.atZone(zoneId);
-//        Date expirationDate = Date.from(zonedDateTime.toInstant());
-//        return create(userId, "refresh-token", expirationDate);
-//    }
-//
-//    public String create(String userId, String subject, Date date) {
-//        String jwt = Jwts.builder()
-//                .setHeaderParam("typ", "JWT") // Header 설정 : 토큰의 타입, 해쉬 알고리즘 정보 세팅.
-//                .setHeaderParam("regDate", System.currentTimeMillis()) // 생성 시간
-//                .setSubject(subject) // 구분자 설정 : access-token || refresh-token
-//                .setExpiration(date) // 만료일 설정 (유효기간)
-//                .claim("userId", userId)
-//                .signWith(SignatureAlgorithm.HS256, SALT) // Signature 설정 : secret key를 활용한 암호화.
-//                .compact(); // 직렬화
-//        return jwt;
-//    }
-//
-//    public Map<String, Object> get(String jwt) {
-//        Jws<Claims> claims = null;
-//        try {
-//            claims = Jwts.parser().setSigningKey(SALT).parseClaimsJws(jwt);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log.error(e.getMessage());
-//            throw new UnAuthorizedException("회원 ID 획득에 실패하였습니다.");
-//        }
-//        Map<String, Object> value = claims.getBody();
-//        return value;
-//    }
-//
-//    public String getUserId(String jwt) {
-//        return (String) get(jwt).get("userId");
-//    }
-//
-//    public Member getMemberInfo(HttpServletRequest request) throws Exception {
-//        String accessToken = request.getHeader("access-token");
-//        if (!checkToken(accessToken)){
-//            throw new UnAuthorizedException("회원 정보 획득에 실패하였습니다.");
-//        }
-//
-//        String userId = getUserId(accessToken);
-////        Member member = memberService.getUserInfo(userId);
-//        Member member = null;
-//        if (member == null) {
-//            throw new UnAuthorizedException("회원 정보 획득에 실패하였습니다.");
-//        }
-//        return member;
-//    }
-//
-//    public boolean checkToken(String jwt) {
-//        try {
-//            log.info("access token {}", jwt);
-//            String userId = getUserId(jwt);
-//            log.info("user ID {}", userId);
-//            Jws<Claims> claims = Jwts.parser().setSigningKey(SALT).parseClaimsJws(jwt);
-//            Date expiration = claims.getBody().getExpiration();
-//            return new Date(System.currentTimeMillis()).before(expiration);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new UnAuthorizedException("Token이 올바르지 않습니다.");
-//        }
-//    }
+    private final MemberServiceImpl memberService;
+    private static final String SALT = "songleejeonjeong";
+
+    public String createAccessToken(Long memberId) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime expirationTime = currentTime.plus(30, ChronoUnit.MINUTES);
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime zonedDateTime = expirationTime.atZone(zoneId);
+        Date expirationDate = Date.from(zonedDateTime.toInstant());
+        return create(memberId, "access-token", expirationDate);
+    }
+
+    public String createRefreshToken(Long memberId) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime expirationTime = currentTime.plus(1, ChronoUnit.DAYS);
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime zonedDateTime = expirationTime.atZone(zoneId);
+        Date expirationDate = Date.from(zonedDateTime.toInstant());
+        return create(memberId, "refresh-token", expirationDate);
+    }
+
+    public String create(Long userId, String subject, Date date) {
+        String jwt = Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("regDate", System.currentTimeMillis())
+                .setSubject(subject)
+                .setExpiration(date)
+                .claim("userId", userId)
+                .signWith(SignatureAlgorithm.HS256, SALT)
+                .compact();
+        return jwt;
+    }
+
+    public Long getUserId(String jwt) {
+        return (Long) get(jwt).get("userId");
+    }
+
+    public Map<String, Object> get(String jwt) {
+        Jws<Claims> claims = null;
+        try {
+            claims = Jwts.parser().setSigningKey(SALT).parseClaimsJws(jwt);
+        } catch (Exception e) {
+            throw new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_GET_MEMBER_ID_FAILED);
+        }
+        Map<String, Object> value = claims.getBody();
+        return value;
+    }
+
+
+    public Member getMemberInfo(HttpServletRequest request) {
+        String accessToken = request.getHeader("access-token");
+        checkToken(accessToken);
+
+        return memberService.getUser(getUserId(accessToken))
+                     .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
+    }
+
+    public boolean checkToken(String jwt) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(SALT).parseClaimsJws(jwt);
+            Date expiration = claims.getBody().getExpiration();
+            return new Date(System.currentTimeMillis()).before(expiration);
+        } catch (Exception e) {
+            throw new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_TOKEN_VALIDATION_FAILED);
+        }
+    }
 }
