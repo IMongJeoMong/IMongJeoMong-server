@@ -16,4 +16,6 @@ spring:
 openData:
   tasu:
     serviceKey: HGWbiXI4puxU2CzKvcLxn5CesxFWEHG%2F49E1OBVZH4N3flzq0q%2B442V4Ii2Bk43fuLm0jmkitNv5Qaxxb1U6ag%3D%3D
+  parkingLot:
+    serviceKey: 2SCrtJa2q0nUfUhgHMRiEsqJA4sGLiXD0aih2eXhem3ETCD8GhjlZ66%2FrncMbl3A12VywlgTNLrcNWKW%2B4K4kg%3D%3D
 
