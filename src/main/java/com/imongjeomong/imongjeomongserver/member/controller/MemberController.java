@@ -62,6 +62,13 @@ public class MemberController {
         return response;
     }
 
+    /* 회원 정보 수정 */
+    @PatchMapping("/modify")
+    public CommonResponse modifyMember(@RequestBody Member member){
+        memberService.modify(member);
+        return new CommonResponse(200, "회원 정보가 수정되었습니다.");
+    }
+
     /* 토큰 재발급 */
     @GetMapping("/refresh")
     public DataResponse<?> refreshToken(HttpServletRequest request){
