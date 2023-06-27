@@ -33,6 +33,9 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(Exception.class)
     public CommonResponse exceptionHandler(Exception e) {
+        /* for Debugging */
+        e.printStackTrace();
+
         CommonResponse response = new CommonResponse();
         response.setCode(9999);
         response.setMessage("예외가 발생했습니다.");
