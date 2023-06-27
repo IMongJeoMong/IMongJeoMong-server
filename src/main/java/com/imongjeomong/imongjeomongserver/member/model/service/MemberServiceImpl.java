@@ -21,8 +21,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void drop() {
-
+    public void drop(Long memberId) {
+        memberRepository.deleteById(memberId);
     }
 
     @Override
@@ -31,8 +31,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Optional<Member> getUser(Long memberId) {
+    public Optional<Member> getMemberById(Long memberId) {
         return memberRepository.findById(memberId);
+    }
+
+    @Override
+    public Optional<Member> getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
 
     @Override

@@ -8,11 +8,13 @@ import java.util.Optional;
 public interface MemberService {
     void signUp(Member member);
 
-    void drop();
+    void drop(Long memberId);
 
     Optional<Member> login(Member member);
 
-    Optional<Member> getUser(Long memberId);
+    Optional<Member> getMemberById(Long memberId);
+
+    Optional<Member> getMemberByEmail(String email);
 
     void modify(Member member);
 
