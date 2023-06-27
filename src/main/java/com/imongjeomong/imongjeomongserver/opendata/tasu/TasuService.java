@@ -2,6 +2,7 @@ package com.imongjeomong.imongjeomongserver.opendata.tasu;
 
 import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @EnableTransactionManagement
+@Slf4j
 public class TasuService {
 
     private final String tasuOpenDataUrl = "https://apis.data.go.kr/6300000/openapi2022/tasuInfo/gettasuInfo";
@@ -48,6 +50,8 @@ public class TasuService {
         for (int i = 0; i < tasuInfo.size(); i++) {
             tasuRepository.save(tasuInfo.get(i));
         }
+
+        log.debug("Tasu 데이터 저장 완료");
     }
 
     /**
@@ -95,7 +99,7 @@ public class TasuService {
                     .getAsJsonObject("response")
                     .getAsJsonObject("body").getAsJsonArray("items");
 
-            System.out.println("array.size() = " + array.size());
+            log.info("tasu total count = {}", array.size());
 
             List<Tasu> tasuList = new ArrayList<>();
             for (int i = 0; i < array.size(); i++) {
