@@ -14,7 +14,7 @@ public class TasuController {
 
     private final TasuService tasuService;
 
-    @GetMapping("/tasu/save")
+    @GetMapping("opendata/tasu/save")
     public void saveTasu() throws UnsupportedEncodingException {
         tasuService.saveTasuInfo();
     }
