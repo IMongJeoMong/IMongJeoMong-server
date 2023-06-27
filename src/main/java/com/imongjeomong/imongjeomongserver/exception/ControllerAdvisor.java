@@ -22,6 +22,15 @@ public class ControllerAdvisor {
         return response;
     }
 
+    @ExceptionHandler(UnAuthenticationException.class)
+    public CommonResponse authenticationExceptionHandler(UnAuthenticationException e){
+
+        CommonResponse response = new CommonResponse();
+        response.setCode(e.getCustomExceptionStatus().getCode());
+        response.setMessage(e.getCustomExceptionStatus().getMessage());
+        return response;
+    }
+
     @ExceptionHandler(Exception.class)
     public CommonResponse exceptionHandler(Exception e) {
         CommonResponse response = new CommonResponse();
