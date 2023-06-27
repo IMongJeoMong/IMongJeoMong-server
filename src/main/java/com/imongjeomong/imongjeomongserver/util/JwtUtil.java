@@ -46,20 +46,24 @@ public class JwtUtil {
         return create(memberId, "refresh-token", expirationDate);
     }
 
-    public String create(Long userId, String subject, Date date) {
+    public String create(Long memberId, String subject, Date date) {
+        Member member = memberService.getMember(memberId).orElseThrow(
+                () -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
         String jwt = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("regDate", System.currentTimeMillis())
                 .setSubject(subject)
                 .setExpiration(date)
-                .claim("userId", userId)
+                .claim("memberId", memberId)
+                .claim("email", member.getEmail())
+                .claim("nickname", member.getNickname())
                 .signWith(SignatureAlgorithm.HS256, SALT)
                 .compact();
         return jwt;
     }
 
-    public Long getUserId(String jwt) {
-        return (Long) get(jwt).get("userId");
+    public Long getMemberId(String jwt) {
+        return Long.parseLong(get(jwt).get("memberId").toString());
     }
 
     public Map<String, Object> get(String jwt) {
@@ -78,7 +82,7 @@ public class JwtUtil {
         String accessToken = request.getHeader("access-token");
         checkToken(accessToken);
 
-        return memberService.getUser(getUserId(accessToken))
+        return memberService.getMember(getMemberId(accessToken))
                      .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
     }
 
