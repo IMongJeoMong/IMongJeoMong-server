@@ -1,7 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
 import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,4 +36,7 @@ public class Member {
     @Embedded
     private EditTime editTime;
 
+    public void privateInformationProcessing(){
+        this.password = "PRIVATE";
+    }
 }
