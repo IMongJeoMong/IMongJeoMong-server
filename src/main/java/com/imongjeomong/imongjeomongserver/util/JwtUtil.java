@@ -47,7 +47,7 @@ public class JwtUtil {
     }
 
     public String create(Long memberId, String subject, Date date) {
-        Member member = memberService.getMember(memberId).orElseThrow(
+        Member member = memberService.getMemberById(memberId).orElseThrow(
                 () -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
         String jwt = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
@@ -82,7 +82,7 @@ public class JwtUtil {
         String accessToken = request.getHeader("access-token");
         checkToken(accessToken);
 
-        return memberService.getMember(getMemberId(accessToken))
+        return memberService.getMemberById(getMemberId(accessToken))
                      .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
     }
 
