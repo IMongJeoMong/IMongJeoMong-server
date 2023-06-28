@@ -6,7 +6,6 @@ spring:
     password: mong1q2w
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
     show-sql: true
     hibernate:
