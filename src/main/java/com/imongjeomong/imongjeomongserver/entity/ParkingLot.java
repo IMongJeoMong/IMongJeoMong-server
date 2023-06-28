@@ -1,4 +1,4 @@
-package com.imongjeomong.imongjeomongserver.opendata.parking;
+package com.imongjeomong.imongjeomongserver.entity;
 
 import lombok.Getter;
 import lombok.Setter;

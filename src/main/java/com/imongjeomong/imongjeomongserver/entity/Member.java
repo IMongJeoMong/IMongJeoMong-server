@@ -9,12 +9,14 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true)
@@ -31,7 +33,7 @@ public class Member {
     private int gold;
 
     @OneToOne
-    @JoinColumn(name = "my_mong_id")
+    @JoinColumn(name = "id", table = "my_mong")
     private MyMong myMong;
 
     @Embedded

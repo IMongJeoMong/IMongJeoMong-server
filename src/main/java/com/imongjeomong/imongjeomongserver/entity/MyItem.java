@@ -1,15 +1,19 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
+@Entity
 @Getter
 @Setter
-@Entity
-public class MyMong {
+@NoArgsConstructor
+public class MyItem {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -17,9 +21,6 @@ public class MyMong {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mong_id")
-    private Mong mong;
-
-    private int level;
-    private int exp;
+    @JoinColumn(name = "item_id")
+    private Item item;
 }

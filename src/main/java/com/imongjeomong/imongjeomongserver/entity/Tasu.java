@@ -1,4 +1,4 @@
-package com.imongjeomong.imongjeomongserver.opendata.tasu;
+package com.imongjeomong.imongjeomongserver.entity;
 
 import lombok.Getter;
 import lombok.Setter;
