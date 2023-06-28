@@ -84,6 +84,7 @@ public class MemberServiceImpl implements MemberService {
                     throw new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL);
                 }
         );
+        modifyMember.modifyValue(member);
         memberRepository.save(modifyMember);
     }
 }
