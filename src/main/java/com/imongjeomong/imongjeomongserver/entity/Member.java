@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Getter @Setter
 @Entity
@@ -18,6 +19,8 @@ public class Member {
 
     @Column(unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
 
     @Column(length = 50)
@@ -38,5 +41,27 @@ public class Member {
 
     public void privateInformationProcessing(){
         this.password = "PRIVATE";
+    }
+
+    public void modifyValue(Member member){
+        Optional.ofNullable(member.getNickname()).ifPresent(
+                (nickname) -> this.nickname = nickname
+        );
+
+        Optional.ofNullable(member.getBirth()).ifPresent(
+                (birth) -> this.birth = birth
+        );
+
+        Optional.ofNullable(member.getGender()).ifPresent(
+                (gender) -> this.gender = gender
+        );
+
+        Optional.ofNullable(member.getSidoCode()).ifPresent(
+                (sidoCode) -> this.sidoCode = sidoCode
+        );
+
+        Optional.ofNullable(member.getMyMong()).ifPresent(
+                (myMong) -> this.myMong = myMong
+        );
     }
 }
