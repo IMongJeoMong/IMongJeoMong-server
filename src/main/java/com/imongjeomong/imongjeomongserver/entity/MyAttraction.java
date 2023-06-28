@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class MyAttraction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
