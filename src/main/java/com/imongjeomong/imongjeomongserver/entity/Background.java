@@ -9,18 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Getter @Setter
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
-public class Quest {
+public class Background {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-    private String description;
-    private int exp;
-    private int gold;
+    private String price;
+    private String imagePath;
+
 }
