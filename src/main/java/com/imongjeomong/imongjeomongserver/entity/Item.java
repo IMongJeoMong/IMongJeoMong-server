@@ -19,7 +19,6 @@ public class Item {
     private Long id;
 
     private String name;
-    private String category;
     private String price;
     private String imagePath;
 
