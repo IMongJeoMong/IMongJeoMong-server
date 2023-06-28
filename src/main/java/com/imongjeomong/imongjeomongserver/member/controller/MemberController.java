@@ -1,8 +1,8 @@
 package com.imongjeomong.imongjeomongserver.member.controller;
 
 import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
-import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.member.model.service.MemberService;
 import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
@@ -34,7 +34,12 @@ public class MemberController {
     /* 회원탈퇴 */
     @DeleteMapping("/drop")
     public CommonResponse drop(HttpServletRequest request) {
-        String accessToken = request.getHeader("Authorization").split(" ")[1];
+        String accessToken = "";
+        try {
+            accessToken = request.getHeader("Authorization").split(" ")[1];
+        }catch (NullPointerException e){
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
         memberService.drop(jwtUtil.getMemberId(accessToken));
         return new CommonResponse(200, "회원탈퇴가 완료되었습니다.");
     }
@@ -42,9 +47,7 @@ public class MemberController {
     /* 로그인 */
     @PostMapping("/login")
     public DataResponse<?> login(@RequestBody Member member) {
-        Member loginMember = memberService.login(member)
-                                            .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_EXCEPTION));
-
+        Member loginMember = memberService.login(member).get();
         DataResponse<Map> dataResponse = new DataResponse<>(200, "인증되었습니다.");
         dataResponse.setData(getToken(loginMember.getId()));
         return dataResponse;
@@ -53,8 +56,7 @@ public class MemberController {
     /* 회원조회 */
     @GetMapping("/{email}")
     public DataResponse<?> getMemberInfo(@PathVariable String email){
-        Member findMember = memberService.getMemberByEmail(email).orElseThrow(
-                () -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
+        Member findMember = memberService.getMemberByEmail(email).get();
         findMember.privateInformationProcessing();
 
         DataResponse<Member> response = new DataResponse<>(200, "회원 정보가 조회되었습니다.");
@@ -72,7 +74,12 @@ public class MemberController {
     /* 토큰 재발급 */
     @GetMapping("/refresh")
     public DataResponse<?> refreshToken(HttpServletRequest request){
-        String refreshToken = request.getHeader("Authorization").split(" ")[1];
+        String refreshToken = "";
+        try {
+            refreshToken = request.getHeader("Authorization").split(" ")[1];
+        }catch (NullPointerException e){
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
         jwtUtil.checkToken(refreshToken);
 
         DataResponse<Map> dataResponse = new DataResponse<>(200, "토큰이 재발급 되었습니다.");
