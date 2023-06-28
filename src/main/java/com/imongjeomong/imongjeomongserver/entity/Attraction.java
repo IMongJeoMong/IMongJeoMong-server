@@ -13,14 +13,13 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Item {
+public class Attraction {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String category;
-    private String price;
-    private String imagePath;
-
+    /**
+     * 공공데이터 분석 후 필드 추가 필요함
+     */
 }
