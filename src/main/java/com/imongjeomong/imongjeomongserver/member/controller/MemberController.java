@@ -49,7 +49,12 @@ public class MemberController {
     public DataResponse<?> login(@RequestBody Member member) {
         Member loginMember = memberService.login(member).get();
         DataResponse<Map> dataResponse = new DataResponse<>(200, "인증되었습니다.");
-        dataResponse.setData(getToken(loginMember.getId()));
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Authorization", getToken(loginMember.getId()));
+        loginMember.privateInformationProcessing();
+        map.put("LoginMember", loginMember);
+        dataResponse.setData(map);
         return dataResponse;
     }
 
