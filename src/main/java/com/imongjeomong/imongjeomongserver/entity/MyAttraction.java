@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MyQuest {
+public class MyAttraction {
 
     @Id
     @GeneratedValue
@@ -22,8 +22,10 @@ public class MyQuest {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quest_id")
-    private Quest quest;
-    private LocalDateTime clearTime;
+    @JoinColumn(name = "attraction_id")
+    private Attraction attraction;
+
+    private int count;
+    private LocalDateTime visitTime;
 
 }
