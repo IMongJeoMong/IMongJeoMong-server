@@ -21,4 +21,5 @@ public class Mong {
     private String name;
     private int level;
     private String imagePath;
+    private String description;
 }
