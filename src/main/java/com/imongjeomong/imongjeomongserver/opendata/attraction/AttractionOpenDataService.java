@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.imongjeomong.imongjeomongserver.entity.Attraction;
-import com.imongjeomong.imongjeomongserver.entity.ParkingLot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -26,7 +25,7 @@ public class AttractionOpenDataService {
 
     private final AttractionOpenDataRepository attractionOpenDataRepository;
 
-    private final String parkingOpenDataUrl = "https://apis.data.go.kr/B551011/KorService1/areaBasedList1";
+    private final String attractionOpenDataUrl = "https://apis.data.go.kr/B551011/KorService1/areaBasedList1";
     @Value("${openData.attraction.serviceKey}")
     private String serviceKey;
     private final OkHttpClient client = new OkHttpClient();
@@ -42,25 +41,29 @@ public class AttractionOpenDataService {
         log.info("attraction 데이터 삭제 완료");
 
         // 주차장 데이터 total count 가져오기
-        int count = getParkingLotTotalCount();
+        int count = getAttractionTotalCount();
         log.info("attraction count = {}", count);
 
         // 가져온 total count를 통해 모든 데이터 불러오기
-//        List<ParkingLot> parkingLotList = getAllParkingLotInfo(count);
-//
-//
-//        // 불러온 모든 주차장 데이터를 db에 저장하기
-//        for (int i = 0; i < parkingLotList.size(); i++) {
-//            attractionOpenDataRepository.save(parkingLotList.get(i));
-//        }
+        List<Attraction> attractionList = getAllAttractionInfo(count);
+
+        setAlLAttractionDescription(attractionList);
+
+        for (Attraction attraction : attractionList) {
+            System.out.println(attraction);
+        }
+
+        // 불러온 모든 주차장 데이터를 db에 저장하기
+        for (int i = 0; i < attractionList.size(); i++) {
+            attractionOpenDataRepository.save(attractionList.get(i));
+        }
     }
 
     /**
-     * 공공데이터의 주차장의 위치 개수를 리턴하는 메서드
+     * 공공데이터의 관광지 위치 개수를 리턴하는 메서드
      */
-    private int getParkingLotTotalCount() {
-        // &numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A&areaCode=3
-        String requestUrl = parkingOpenDataUrl + "?serviceKey=" + serviceKey + "&pageNo=1&numOfRows=1&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A&areaCode=3";
+    private int getAttractionTotalCount() {
+        String requestUrl = attractionOpenDataUrl + "?serviceKey=" + serviceKey + "&pageNo=1&numOfRows=1&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A&areaCode=3";
         System.out.println(requestUrl);
 
         Request request = new Request.Builder()
@@ -71,8 +74,10 @@ public class AttractionOpenDataService {
         // 응답 결과 반환
         try (Response response = client.newCall(request).execute()) {
             JsonObject jsonResponse = JsonParser.parseString(response.body().string()).getAsJsonObject();
-            System.out.println(jsonResponse);
-            return jsonResponse.get("totalCount").getAsInt();
+
+            return jsonResponse.getAsJsonObject("response")
+                    .getAsJsonObject("body")
+                    .getAsJsonPrimitive("totalCount").getAsInt();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -80,10 +85,10 @@ public class AttractionOpenDataService {
     }
 
     /**
-     * 주차장의 모든 정보를 반환하는 메서드
+     * 관광지의 정보를 공공테이터로부터 파싱하는 메서드
      */
-    private List<Attraction> getAllParkingLotInfo(int totalCont) {
-        String requestUrl = parkingOpenDataUrl + "?serviceKey=" + serviceKey + "&pageNo=1&numOfRows=" + totalCont;
+    private List<Attraction> getAllAttractionInfo(int totalCont) {
+        String requestUrl = attractionOpenDataUrl + "?serviceKey=" + serviceKey + "&pageNo=1&numOfRows=" + totalCont + "&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A&areaCode=3";
         System.out.println(requestUrl);
 
         Request request = new Request.Builder()
@@ -93,44 +98,71 @@ public class AttractionOpenDataService {
 
         // 응답 결과 반환
         try (Response response = client.newCall(request).execute()) {
-            JsonObject jsonResponse = JsonParser.parseString(response.body().string()).getAsJsonObject();
-            JsonArray array = jsonResponse.getAsJsonArray("resultList");
+            JsonObject jsonResponse = JsonParser.parseString(response.body().string())
+                    .getAsJsonObject()
+                    .getAsJsonObject("response")
+                    .getAsJsonObject("body")
+                    .getAsJsonObject("items");
 
-            System.out.println("array.size() = " + array.size());
+            JsonArray array = jsonResponse.getAsJsonArray("item");
 
-            List<Attraction> parkingLotList = new ArrayList<>();
+            List<Attraction> attractionList = new ArrayList<>();
             for (int i = 0; i < array.size(); i++) {
-                System.out.println(i);
-                Attraction parkingLot = new Attraction();
+                Attraction attraction = new Attraction();
 
-                // lat, lng, kioskId, address
-//                parkingLot.setName(array.get(i).getAsJsonObject().get("park_name").getAsString());
-//                parkingLot.setLat(Double.parseDouble(array.get(i).getAsJsonObject().get("park_latitude").getAsString()));
-//                parkingLot.setLng(Double.parseDouble(array.get(i).getAsJsonObject().get("park_longitude").getAsString()));
+                // name, address, lat, lng, description, contentId, contentTypeId, imagePath, tel, sidoCode
+                attraction.setName(array.get(i).getAsJsonObject().get("title").getAsString());
+                attraction.setId(Long.parseLong(array.get(i).getAsJsonObject().get("contentid").getAsString()));
+                attraction.setContentTypeId(Integer.parseInt(array.get(i).getAsJsonObject().get("contenttypeid").getAsString()));
+                attraction.setLat(Double.parseDouble(array.get(i).getAsJsonObject().get("mapy").getAsString()));
+                attraction.setLng(Double.parseDouble(array.get(i).getAsJsonObject().get("mapx").getAsString()));
+                attraction.setAddress(array.get(i).getAsJsonObject().get("addr1").getAsString());
+                attraction.setTel(array.get(i).getAsJsonObject().get("tel").getAsString());
+                attraction.setImagePath(array.get(i).getAsJsonObject().get("firstimage").getAsString());
+                attraction.setSidoCode(Integer.parseInt(array.get(i).getAsJsonObject().get("areacode").getAsString()));
 
-                /**
-                 * 공공데이터 중 지번 address가 null 인 경우 도로명으로 입력.
-                 * 도로명도 null이라면 주소값을 비워둔다.
-                 * -> 추후 위,경도와 맵api를 활용해 주소를 가져오는 로직이 필요
-                 */
-//                if ("null".equals(array.get(i).getAsJsonObject().get("park_address1").toString())) {
-//                    if ("null".equals(array.get(i).getAsJsonObject().get("park_address2").toString())) {
-//                        parkingLot.setAddress(null);
-//                    } else {
-//                        parkingLot.setAddress(array.get(i).getAsJsonObject().get("park_address2").getAsString());
-//                    }
-//                } else {
-//                    parkingLot.setAddress(array.get(i).getAsJsonObject().get("park_address1").getAsString());
-//                }
-
-                parkingLotList.add(parkingLot);
-                System.out.println(parkingLot);
+                attractionList.add(attraction);
             }
 
-            return parkingLotList;
+            return attractionList;
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * description 데이터를 삽입한다.
+     */
+    private void setAlLAttractionDescription(List<Attraction> attractionList) {
+        String requestUrl = attractionOpenDataUrl + "?serviceKey=" + serviceKey + "&MobileOS=ETC&MobileApp=AppTest&_type=json&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1&contentId=";
+        requestUrl = requestUrl.replaceAll("areaBasedList1", "detailCommon1");
+
+        for (Attraction attraction : attractionList) {
+            Long contentId = attraction.getId();
+
+            String contentRequestUrl = requestUrl + contentId;
+
+            System.out.println(contentRequestUrl);
+            Request request = new Request.Builder()
+                    .url(contentRequestUrl)
+                    .get()
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                JsonObject jsonResponse = JsonParser.parseString(response.body().string())
+                        .getAsJsonObject()
+                        .getAsJsonObject("response")
+                        .getAsJsonObject("body")
+                        .getAsJsonObject("items");
+
+                JsonArray array = jsonResponse.getAsJsonArray("item");
+
+                attraction.setDescription(array.get(0).getAsJsonObject().get("overview").getAsString());
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
     }
 }
