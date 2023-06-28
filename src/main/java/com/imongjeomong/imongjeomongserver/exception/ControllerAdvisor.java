@@ -4,6 +4,7 @@ import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class ControllerAdvisor {
 
-    @ExceptionHandler(SampleException.class)
-    public CommonResponse sampleExceptionHandler(SampleException e){
+    @ExceptionHandler(CommonException.class)
+    public CommonResponse commonExceptionHandler(CommonException e){
 
         CommonResponse response = new CommonResponse();
         response.setCode(e.getCustomExceptionStatus().getCode());
@@ -28,6 +29,15 @@ public class ControllerAdvisor {
         CommonResponse response = new CommonResponse();
         response.setCode(e.getCustomExceptionStatus().getCode());
         response.setMessage(e.getCustomExceptionStatus().getMessage());
+        return response;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public CommonResponse httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e){
+
+        CommonResponse response = new CommonResponse();
+        response.setCode(CustomExceptionStatus.MESSAGE_NOT_READABLE.getCode());
+        response.setMessage(CustomExceptionStatus.MESSAGE_NOT_READABLE.getMessage());
         return response;
     }
 
