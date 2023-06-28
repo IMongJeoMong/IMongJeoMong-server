@@ -1,15 +1,20 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
-@Entity
-public class MyMong {
+@NoArgsConstructor
+public class MyAttraction {
+
     @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -17,9 +22,10 @@ public class MyMong {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mong_id")
-    private Mong mong;
+    @JoinColumn(name = "attraction_id")
+    private Attraction attraction;
 
-    private int level;
-    private int exp;
+    private int count;
+    private LocalDateTime visitTime;
+
 }
