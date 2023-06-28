@@ -16,7 +16,7 @@ import java.util.Optional;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
@@ -35,16 +35,16 @@ public class Member {
     private int gold;
 
     @OneToOne
-    @JoinColumn(name = "id", table = "my_mong")
-    private Mong selectedMong;
+    @JoinColumn(name = "selected_mong_id")
+    private MyMong selectedMong;
 
     @OneToOne
-    @JoinColumn(name = "my_item_id", table = "my_item")
-    private Item myItem;
+    @JoinColumn(name = "selected_item_id")
+    private MyItem selectedItem;
 
     @OneToOne
-    @JoinColumn(name = "my_background_id", table = "my_background")
-    private Background myBackground;
+    @JoinColumn(name = "selected_background_id")
+    private MyBackground selectedBackground;
 
     @Embedded
     private EditTime editTime;
