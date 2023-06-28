@@ -3,6 +3,7 @@ package com.imongjeomong.imongjeomongserver.opendata.parking;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.imongjeomong.imongjeomongserver.entity.ParkingLot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;

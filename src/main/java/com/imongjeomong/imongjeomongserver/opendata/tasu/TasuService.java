@@ -1,13 +1,13 @@
 package com.imongjeomong.imongjeomongserver.opendata.tasu;
 
 import com.google.gson.*;
+import com.imongjeomong.imongjeomongserver.entity.Tasu;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
