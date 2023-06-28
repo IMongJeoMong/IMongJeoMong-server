@@ -36,7 +36,15 @@ public class Member {
 
     @OneToOne
     @JoinColumn(name = "id", table = "my_mong")
-    private MyMong myMong;
+    private Mong selectedMong;
+
+    @OneToOne
+    @JoinColumn(name = "my_item_id", table = "my_item")
+    private Item myItem;
+
+    @OneToOne
+    @JoinColumn(name = "my_background_id", table = "my_background")
+    private Background myBackground;
 
     @Embedded
     private EditTime editTime;
@@ -60,10 +68,6 @@ public class Member {
 
         Optional.ofNullable(member.getSidoCode()).ifPresent(
                 (sidoCode) -> this.sidoCode = sidoCode
-        );
-
-        Optional.ofNullable(member.getMyMong()).ifPresent(
-                (myMong) -> this.myMong = myMong
         );
     }
 }
