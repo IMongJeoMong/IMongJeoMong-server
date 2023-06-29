@@ -73,7 +73,10 @@ public class MemberController {
         String accessToken = getAccessToken(request);
         paramMap.put("id", jwtUtil.getMemberId(accessToken));
         DataResponse<Member> dataResponse = new DataResponse<>(200, "회원 정보가 수정되었습니다.");
-        memberService.modify(paramMap).ifPresent(dataResponse::setData);
+        memberService.modify(paramMap).ifPresent((modifyMember) -> {
+            modifyMember.privateInformationProcessing();
+            dataResponse.setData(modifyMember);
+        });
         return dataResponse;
     }
 

@@ -110,7 +110,6 @@ public class MemberServiceImpl implements MemberService {
 
         modifyMember.modifyValue(paramMap);
         modifyMember.getEditTime().setUpdateTime(LocalDateTime.now());
-        modifyMember.privateInformationProcessing();
         return Optional.of(memberRepository.save(modifyMember));
     }
 }
