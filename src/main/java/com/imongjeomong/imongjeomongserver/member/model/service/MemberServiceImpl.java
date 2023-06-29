@@ -1,11 +1,13 @@
 package com.imongjeomong.imongjeomongserver.member.model.service;
 
 import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.entity.MyMong;
 import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
+import com.imongjeomong.imongjeomongserver.mong.model.repository.MyMongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -21,6 +24,10 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final MyMongRepository myMongRepository;
+
+//    private final MyItemRepository myItemRepository;
+//    private final MyBackgroundRepository myBackgroundRepository;
 
     @Transactional
     @Override
@@ -78,13 +85,31 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modify(Member member) {
-        Member modifyMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> {
-                    throw new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL);
-                }
+    @Transactional
+    public Optional<Member> modify(Map<String, Object> paramMap) {
+        Member modifyMember = memberRepository.findById(Long.parseLong(paramMap.get("id").toString()))
+                .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL)
         );
-        modifyMember.modifyValue(member);
-        memberRepository.save(modifyMember);
+
+        if (paramMap.containsKey("selected_mong_id")) {
+            myMongRepository.findById(Long.parseLong(paramMap.get("selected_mong_id").toString()))
+                    .ifPresent((myMong) -> paramMap.put("selectedMong", myMong));
+        }
+
+        /* 추후 아이템 / 배경 구현 시 주석 해제
+        if (paramMap.containsKey("selected_item_id")) {
+            paramMap.put("selectedItem", myMongRepository.findById(
+                    Long.parseLong(paramMap.get("selected_item_id").toString())));
+        }
+
+        if (paramMap.containsKey("selected_background_id")) {
+            paramMap.put("selectedBackground", myMongRepository.findById(
+                    Long.parseLong(paramMap.get("selected_background_id").toString())));
+        }
+        */
+
+        modifyMember.modifyValue(paramMap);
+        modifyMember.getEditTime().setUpdateTime(LocalDateTime.now());
+        return Optional.of(memberRepository.save(modifyMember));
     }
 }
