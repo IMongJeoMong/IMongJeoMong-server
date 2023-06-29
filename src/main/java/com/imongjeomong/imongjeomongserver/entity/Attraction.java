@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,15 +13,11 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Attraction {
 
     @Id
     private Long id;
-
-    /**
-     * 공공데이터 분석 후 필드 추가 필요함
-     */
-
     private String name;
     private String address;
     private Double lat;
