@@ -4,13 +4,14 @@ import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.Map;
 
-@Getter
-@Setter
+@Slf4j
+@Getter @Setter
 @Entity
 @NoArgsConstructor
 public class Member {
@@ -53,21 +54,14 @@ public class Member {
         this.password = "PRIVATE";
     }
 
-    public void modifyValue(Member member){
-        Optional.ofNullable(member.getNickname()).ifPresent(
-                (nickname) -> this.nickname = nickname
-        );
+    public void modifyValue(Map<String, Object> paramMap){
+        if (paramMap.containsKey("nickname"))this.nickname = (String) paramMap.get("nickname");
+        if (paramMap.containsKey("birth")) this.birth = LocalDate.parse(paramMap.get("birth").toString());
+        if (paramMap.containsKey("gender")) this.gender = (String) paramMap.get("gender");
+        if (paramMap.containsKey("sidoCode")) this.sidoCode = (int) paramMap.get("sidoCode");
 
-        Optional.ofNullable(member.getBirth()).ifPresent(
-                (birth) -> this.birth = birth
-        );
-
-        Optional.ofNullable(member.getGender()).ifPresent(
-                (gender) -> this.gender = gender
-        );
-
-        Optional.ofNullable(member.getSidoCode()).ifPresent(
-                (sidoCode) -> this.sidoCode = sidoCode
-        );
+        if (paramMap.containsKey("selectedMong")) this.selectedMong = (MyMong) paramMap.get("selectedMong");
+        if (paramMap.containsKey("selectedItem")) this.selectedItem = (MyItem) paramMap.get("selectedItem");
+        if (paramMap.containsKey("selectedBackground")) this.selectedBackground = (MyBackground) paramMap.get("selectedBackground");
     }
 }

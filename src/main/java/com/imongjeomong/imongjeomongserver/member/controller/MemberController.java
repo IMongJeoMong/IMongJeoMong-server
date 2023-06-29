@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -34,15 +35,12 @@ public class MemberController {
     /* 회원탈퇴 */
     @DeleteMapping("/drop")
     public CommonResponse drop(HttpServletRequest request) {
-        String accessToken = "";
-        try {
-            accessToken = request.getHeader("Authorization").split(" ")[1];
-        }catch (NullPointerException e){
-            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
-        }
+        String accessToken = getAccessToken(request);
         memberService.drop(jwtUtil.getMemberId(accessToken));
         return new CommonResponse(200, "회원탈퇴가 완료되었습니다.");
     }
+
+
 
     /* 로그인 */
     @PostMapping("/login")
@@ -71,20 +69,18 @@ public class MemberController {
 
     /* 회원 정보 수정 */
     @PatchMapping("/modify")
-    public CommonResponse modifyMember(@RequestBody Member member){
-        memberService.modify(member);
-        return new CommonResponse(200, "회원 정보가 수정되었습니다.");
+    public DataResponse<?> modifyMember(@RequestBody Map<String, Object> paramMap, HttpServletRequest request){
+        String accessToken = getAccessToken(request);
+        paramMap.put("id", jwtUtil.getMemberId(accessToken));
+        DataResponse<Member> dataResponse = new DataResponse<>(200, "회원 정보가 수정되었습니다.");
+        memberService.modify(paramMap).ifPresent(dataResponse::setData);
+        return dataResponse;
     }
 
     /* 토큰 재발급 */
     @GetMapping("/refresh")
     public DataResponse<?> refreshToken(HttpServletRequest request){
-        String refreshToken = "";
-        try {
-            refreshToken = request.getHeader("Authorization").split(" ")[1];
-        }catch (NullPointerException e){
-            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
-        }
+        String refreshToken = getAccessToken(request);
         jwtUtil.checkToken(refreshToken);
 
         DataResponse<Map> dataResponse = new DataResponse<>(200, "토큰이 재발급 되었습니다.");
@@ -99,6 +95,17 @@ public class MemberController {
         result.put("refresh-token", jwtUtil.createRefreshToken(memberId));
 
         return result;
+    }
+
+    /* 헤더 Authorization 파싱 */
+    private static String getAccessToken(HttpServletRequest request) {
+        String accessToken = "";
+        try {
+            accessToken = request.getHeader("Authorization").split(" ")[1];
+        }catch (NullPointerException e){
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
+        return accessToken;
     }
 
 }
