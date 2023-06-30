@@ -8,6 +8,8 @@ import com.imongjeomong.imongjeomongserver.response.DataResponse;
 import com.imongjeomong.imongjeomongserver.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,5 +54,23 @@ public class ItemController {
         response.setData(itemList);
 
         return response;
+    }
+
+    @PostMapping("/item/buy")
+    public DataResponse<String> buyItem(HttpServletRequest request, @RequestBody ItemDto item) {
+
+        System.out.println(item);
+
+        Long memberId = null;
+        try {
+            String accessToken = request.getHeader("Authorization").split(" ")[1];
+            memberId = jwtUtil.getMemberId(accessToken);
+        } catch (Exception e) {
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
+
+        itemService.buyItem(memberId, item.getItemId());
+
+        return new DataResponse<>(201, "아이템 구매 성공");
     }
 }
