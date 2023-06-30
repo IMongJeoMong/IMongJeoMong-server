@@ -23,6 +23,11 @@ public enum CustomExceptionStatus {
 
     MONG_DOES_NOT_EXISTS(-5000, "몽이 존재하지 않습니다"),
 
+    // Item 이 존재하지 않을 떄의 에러
+    ITEM_NOT_FOUND(-6000, "아이템이 존재하지 않습니다."),
+    ITEM_DUPLICATE(-6001, "이미 구매한 아이템입니다."),
+
+    MEMBER_NOT_ENOUGH_GOLD(-6002, "현재 가지고 있는 골드가 부족합니다."),
 
     /* 위의 어떤 것에도 해당하지 않는 에러 */
     COMMON_EXCEPTION(-9999, "예외가 발생하였습니다.");
