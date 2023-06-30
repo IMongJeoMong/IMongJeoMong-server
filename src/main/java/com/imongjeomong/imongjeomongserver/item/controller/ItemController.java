@@ -57,10 +57,7 @@ public class ItemController {
     }
 
     @PostMapping("/item/buy")
-    public DataResponse<String> buyItem(HttpServletRequest request, @RequestBody ItemDto item) {
-
-        System.out.println(item);
-
+    public DataResponse<Object> buyItem(HttpServletRequest request, @RequestBody ItemDto item) {
         Long memberId = null;
         try {
             String accessToken = request.getHeader("Authorization").split(" ")[1];
@@ -69,8 +66,10 @@ public class ItemController {
             throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
         }
 
-        itemService.buyItem(memberId, item.getItemId());
+        ItemDto buyItem = itemService.buyItem(memberId, item.getItemId());
+        DataResponse<Object> response = new DataResponse<>(201, "아이템 구매 성공");
+        response.setData(buyItem);
 
-        return new DataResponse<>(201, "아이템 구매 성공");
+        return response;
     }
 }

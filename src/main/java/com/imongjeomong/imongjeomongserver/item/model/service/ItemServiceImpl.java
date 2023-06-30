@@ -11,15 +11,16 @@ import com.imongjeomong.imongjeomongserver.item.model.repository.ItemRepository;
 import com.imongjeomong.imongjeomongserver.item.model.repository.MyItemRepository;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -63,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void buyItem(Long memberId, Long itemId) {
+    public ItemDto buyItem(Long memberId, Long itemId) {
         /*
         1. 아이템 구매시 해당 유저의 골드를 검사한다 (골드 부족 시 예외 발생)
         2. 중복 구매 방지 (같은 아이템을 이미 보유하고 있다면 예외 발생)
@@ -81,9 +82,10 @@ public class ItemServiceImpl implements ItemService {
             throw new CommonException(CustomExceptionStatus.MEMBER_NOT_ENOUGH_GOLD);
         }
 
-        // 2. 중복 구매 방지
-        myItemRepository.findByItem(item).ifPresent(i -> {
-            throw new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND);
+        // 2. 중복 구매 방지 로직
+        myItemRepository.findByItem(itemId).ifPresent(i -> {
+            log.error("{} 중복 구매 시도", member.getEmail());
+            throw new CommonException(CustomExceptionStatus.ITEM_DUPLICATE);
         });
 
 
@@ -95,5 +97,7 @@ public class ItemServiceImpl implements ItemService {
         buyItem.setMember(member);
 
         myItemRepository.save(buyItem);
+
+        return item.toItemDto();
     }
 }

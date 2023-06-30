@@ -9,5 +9,5 @@ public interface ItemService {
 
     List<ItemDto> getItemList();
 
-    void buyItem(Long memberId, Long itemId);
+    ItemDto buyItem(Long memberId, Long itemId);
 }
