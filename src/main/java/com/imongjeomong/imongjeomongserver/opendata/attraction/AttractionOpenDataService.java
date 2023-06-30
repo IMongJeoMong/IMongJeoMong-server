@@ -85,7 +85,7 @@ public class AttractionOpenDataService {
     }
 
     /**
-     * 관광지의 정보를 공공테이터로부터 파싱하는 메서드
+     * 관광지 공공데이터를 호출해 관광지 리스트로 반환하는 메서드
      */
     private List<Attraction> getAllAttractionInfo(int totalCont) {
         String requestUrl = attractionOpenDataUrl + "?serviceKey=" + serviceKey + "&pageNo=1&numOfRows=" + totalCont + "&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A&areaCode=3";
@@ -121,6 +121,9 @@ public class AttractionOpenDataService {
                 attraction.setImagePath(array.get(i).getAsJsonObject().get("firstimage").getAsString());
                 attraction.setSidoCode(Integer.parseInt(array.get(i).getAsJsonObject().get("areacode").getAsString()));
 
+                // gold, exp 설정
+                setAttractionGoldAndExp(attraction);
+
                 attractionList.add(attraction);
             }
 
@@ -129,6 +132,15 @@ public class AttractionOpenDataService {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 각 관광지별 골드와 경험치 설정
+     * 현재는 100G 와 300EXP를 설정해 놓았지만 향후 비즈니스 로직에 따라 변경 가능
+     */
+    private void setAttractionGoldAndExp(Attraction attraction) {
+        attraction.setGold(100);
+        attraction.setExp(300);
     }
 
     /**
