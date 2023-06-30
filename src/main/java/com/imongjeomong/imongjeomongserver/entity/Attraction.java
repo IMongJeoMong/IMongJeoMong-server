@@ -33,4 +33,7 @@ public class Attraction {
     private String imagePath;
     private String tel;
     private int sidoCode;
+
+    private int gold;   // 방문시 획득 골드
+    private int exp;    // 방문시 획득 경험치
 }
