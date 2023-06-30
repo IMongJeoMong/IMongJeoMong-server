@@ -19,6 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //            "JOIN FETCH si.item " +
             "WHERE m.email = :email AND m.password = :password")
     Optional<Member> findByEmailAndPassword(String email, String password);
+
     Optional<Member> findByEmail(String email);
 
 }
