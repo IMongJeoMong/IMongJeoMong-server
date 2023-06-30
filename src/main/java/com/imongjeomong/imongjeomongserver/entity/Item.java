@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
+import com.imongjeomong.imongjeomongserver.dto.ItemDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +22,14 @@ public class Item {
     private Long id;
 
     private String name;
-    private String price;
+    private int price;
     private String imagePath;
 
+    public ItemDto toItemDto() {
+        return ItemDto.builder()
+                .itemId(this.getId())
+                .imagePath(this.getImagePath())
+                .name(this.getName())
+                .price(this.getPrice()).build();
+    }
 }
