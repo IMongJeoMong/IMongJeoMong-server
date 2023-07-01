@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.attraction.model.repository;
 
+import com.imongjeomong.imongjeomongserver.dto.AttractionDTO;
 import com.imongjeomong.imongjeomongserver.entity.Attraction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,11 +12,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AttractionRepository extends JpaRepository<Attraction,Long> {
 
-    @Query("SELECT a, SQRT(POW(a.lat - :lat , 2) + POW(a.lng - :lng , 2)) AS distance FROM Attraction a " +
+    @Query("SELECT new com.imongjeomong.imongjeomongserver.dto.AttractionDTO(" +
+            "a.id, a.name, a.address, a.lat, a.lng, a.description, a.contentTypeId, a.imagePath, " +
+            "a.tel, a.sidoCode, a.gold, a.exp, " +
+            "SQRT(POW(a.lat - :lat , 2) + POW(a.lng - :lng , 2)) AS distance )" +
+            " FROM Attraction a " +
             "WHERE a.name LIKE CONCAT('%', :keyword, '%' ) " +
-            "ORDER BY distance asc ")
-    Page<Attraction> findAttractionByCondition(@Param("keyword") String keyword,
-//                                               @Param("lat") double lat,
-                                               @Param("lng") double lng,
-                                               Pageable pageable);
+            "ORDER BY distance")
+    Page<AttractionDTO> findAttractionByCondition(@Param("keyword") String keyword,
+                                                  @Param("lat") double lat,
+                                                  @Param("lng") double lng,
+                                                  Pageable pageable);
 }
