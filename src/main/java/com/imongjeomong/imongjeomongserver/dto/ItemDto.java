@@ -12,5 +12,7 @@ public class ItemDto {
     private Long itemId;
     private String name;
     private int price;
-    private String imagePath;
+    private String shopImagePath;
+    private String charImagePath;
+    private boolean isOwn;
 }
