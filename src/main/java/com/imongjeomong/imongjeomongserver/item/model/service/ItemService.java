@@ -8,4 +8,6 @@ public interface ItemService {
     List<ItemDto> getMyItemList(Long memberId);
 
     List<ItemDto> getItemList();
+
+    ItemDto buyItem(Long memberId, Long itemId);
 }
