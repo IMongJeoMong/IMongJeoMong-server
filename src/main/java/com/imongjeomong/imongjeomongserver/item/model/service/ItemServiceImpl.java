@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,9 @@ public class ItemServiceImpl implements ItemService {
     private final MyItemRepository myItemRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * 내가 보유한 아이템 목록만 반환
+     */
     @Override
     @Transactional
     public List<ItemDto> getMyItemList(Long memberId) {
@@ -35,31 +40,48 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDto> itemList = new ArrayList<>();
         for (MyItem m : myItem) {
             Item curItem = m.getItem();
-            itemList.add(ItemDto.builder()
-                    .itemId(curItem.getId())
-                    .name(curItem.getName())
-                    .price(curItem.getPrice())
-                    .imagePath(curItem.getImagePath()).build());
+            ItemDto itemDto = curItem.toItemDto();
+            itemDto.setOwn(true);
+            itemList.add(itemDto);
         }
 
         return itemList;
     }
 
+    /**
+     * 전체 아이템 리스트 반환
+     */
     @Override
     public List<ItemDto> getItemList() {
         List<Item> itemList = itemRepository.findAll();
 
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : itemList) {
-            itemDtoList.add(ItemDto.builder()
-                    .itemId(item.getId())
-                    .name(item.getName())
-                    .price(item.getPrice())
-                    .imagePath(item.getImagePath())
-                    .build());
+            itemDtoList.add(item.toItemDto());
         }
 
         return itemDtoList;
+    }
+
+    /**
+     * 전체 아이템 리스트에 보유 여부를 표시해 반환
+     */
+    @Override
+    @Transactional
+    public List<ItemDto> getOwnItemList(Long memberId) {
+        List<ItemDto> myItemList = getMyItemList(memberId);
+        List<ItemDto> itemList = getItemList();
+
+        Set<Long> myItemKey = new HashSet<>();
+        for (ItemDto itemDto : myItemList) {
+            myItemKey.add(itemDto.getItemId());
+        }
+
+        for (ItemDto itemDto : itemList) {
+            if (myItemKey.contains(itemDto.getItemId())) itemDto.setOwn(true);
+        }
+
+        return itemList;
     }
 
     @Override
