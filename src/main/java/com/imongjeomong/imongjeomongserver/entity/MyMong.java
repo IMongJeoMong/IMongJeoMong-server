@@ -13,7 +13,7 @@ public class MyMong {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "mong_id")
     private Mong mong;
 
