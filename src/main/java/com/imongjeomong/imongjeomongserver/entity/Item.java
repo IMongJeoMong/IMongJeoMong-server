@@ -23,12 +23,14 @@ public class Item {
 
     private String name;
     private int price;
-    private String imagePath;
+    private String shopImagePath;
+    private String charImagePath;
 
     public ItemDto toItemDto() {
         return ItemDto.builder()
                 .itemId(this.getId())
-                .imagePath(this.getImagePath())
+                .shopImagePath(this.getShopImagePath())
+                .charImagePath(this.getCharImagePath())
                 .name(this.getName())
                 .price(this.getPrice()).build();
     }
