@@ -53,9 +53,26 @@ public class ItemController {
         return response;
     }
 
+    /**
+     * 보유중 표시한 전체 리스트 조회
+     */
+    @GetMapping("/item/all-own/list")
+    public DataResponse<List<ItemDto>> getOwnItemList(HttpServletRequest request) {
+        Long memberId = null;
+        try {
+            String accessToken = request.getHeader("Authorization").split(" ")[1];
+            memberId = jwtUtil.getMemberId(accessToken);
+        } catch (Exception e) {
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
+
+        DataResponse<List<ItemDto>> response = new DataResponse<>(200, "전체 아이템 목록에 보유한 아이템 표시 리스트");
+        response.setData(itemService.getOwnItemList(memberId));
+        return response;
+    }
+
     @PostMapping("/item/buy/{itemId}")
     public DataResponse<Object> buyItem(HttpServletRequest request, @PathVariable Long itemId) {
-        System.out.println(itemId);
         Long memberId = null;
         try {
             String accessToken = request.getHeader("Authorization").split(" ")[1];
