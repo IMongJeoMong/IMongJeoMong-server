@@ -25,5 +25,6 @@ public class MyQuest {
     private Quest quest;
     private LocalDateTime clearTime;
     private LocalDateTime rewardTime;
+    private int count;
 
 }
