@@ -2,6 +2,7 @@ package com.imongjeomong.imongjeomongserver.quest.model.service;
 
 import com.imongjeomong.imongjeomongserver.dto.MyQuestDTO;
 import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.entity.MyMong;
 import com.imongjeomong.imongjeomongserver.entity.MyQuest;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
@@ -62,7 +63,7 @@ public class QuestServiceImpl implements QuestService {
 
     @Transactional
     @Override
-    public Member getQuestReward(HttpServletRequest request, Long myQuestId) {
+    public void getQuestReward(HttpServletRequest request, Long myQuestId) {
         String accessToken = getAccessToken(request);
         Optional<Member> findMember = memberRepository.findById(jwtUtil.getMemberId(accessToken));
         MyQuest findMyQuest = myQuestRepository.findById(myQuestId).get();
@@ -72,13 +73,14 @@ public class QuestServiceImpl implements QuestService {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("gold", modifyMember.getGold() + findMyQuest.getQuest().getGold());
             paramMap.put("updateTime", LocalDateTime.now());
+            MyMong selectedMong = modifyMember.getSelectedMong();
+            selectedMong.setExp(selectedMong.getExp() + findMyQuest.getQuest().getExp());
             modifyMember.modifyValue(paramMap);
-            modifyMember = memberRepository.save(modifyMember);
+            memberRepository.save(modifyMember);
 
             findMyQuest.setRewardTime(LocalDateTime.now());
             myQuestRepository.save(findMyQuest);
         }
-        return modifyMember;
     }
 
     /* 헤더 Authorization 파싱 */
