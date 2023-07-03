@@ -2,6 +2,7 @@ package com.imongjeomong.imongjeomongserver.quest.controller;
 
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.quest.model.service.QuestService;
+import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,9 @@ public class QuestController {
     }
 
     @PostMapping("/{myQuestId}")
-    public DataResponse<?> getQuestReward(HttpServletRequest request, @PathVariable Long myQuestId) {
-        DataResponse<Member> dataResponse = new DataResponse<>(200, "보상을 획득하였습니다.");
-        dataResponse.setData(questServiceImpl.getQuestReward(request, myQuestId));
-
-        return dataResponse;
+    public CommonResponse getQuestReward(HttpServletRequest request, @PathVariable Long myQuestId) {
+        CommonResponse response = new CommonResponse(200, "보상을 획득하였습니다.");
+        questServiceImpl.getQuestReward(request, myQuestId);
+        return response;
     }
 }

@@ -9,5 +9,5 @@ import java.util.List;
 public interface QuestService {
     List<MyQuestDTO> getDailyQuestList(HttpServletRequest request);
 
-    Member getQuestReward(HttpServletRequest request, Long myQuestId);
+    void getQuestReward(HttpServletRequest request, Long myQuestId);
 }
