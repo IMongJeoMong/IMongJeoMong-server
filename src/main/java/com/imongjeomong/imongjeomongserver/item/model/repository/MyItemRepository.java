@@ -15,4 +15,7 @@ public interface MyItemRepository extends JpaRepository<MyItem, Long> {
 
     @Query("select m from MyItem m where m.item.id = :itemId")
     Optional<MyItem> findByItem(@Param("itemId") Long itemId);
+
+    @Query("select count(m) from MyItem m where m.member.id = :member_id")
+    Long countByMemberId(@Param("member_id") Long memberId);
 }
