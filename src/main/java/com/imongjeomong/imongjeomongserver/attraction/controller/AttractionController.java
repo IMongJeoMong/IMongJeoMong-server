@@ -2,6 +2,7 @@ package com.imongjeomong.imongjeomongserver.attraction.controller;
 
 import com.imongjeomong.imongjeomongserver.attraction.model.service.AttractionService;
 import com.imongjeomong.imongjeomongserver.dto.AttractionDTO;
+import com.imongjeomong.imongjeomongserver.quest.model.service.QuestService;
 import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class AttractionController {
 
     private final AttractionService attractionService;
+    private final QuestService questServiceImpl;
 
     /* 관광지 리스트 반환 */
     @GetMapping("/list")
@@ -51,6 +53,8 @@ public class AttractionController {
     public CommonResponse visitAttraction(@PathVariable Long attractionId, HttpServletRequest request) {
         attractionService.visitAttraction(attractionId, request);
         CommonResponse response = new CommonResponse(200, "방문 처리되었습니다.");
+
+        questServiceImpl.attendAttraction(request);
         return response;
     }
 

@@ -125,10 +125,44 @@ public class QuestServiceImpl implements QuestService {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
 
-        if (findAttendQuest.getClearTime().isBefore(today6h)){
+        if(findAttendQuest.getClearTime() != null){
+            if (findAttendQuest.getClearTime().isBefore(today6h)){
+                findAttendQuest.setClearTime(LocalDateTime.now());
+            }
+        }else {
             findAttendQuest.setClearTime(LocalDateTime.now());
-            myQuestRepository.save(findAttendQuest);
         }
+        myQuestRepository.save(findAttendQuest);
+    }
+
+    @Override
+    public void attendAttraction(HttpServletRequest request) {
+        Long memberId = jwtUtil.getMemberId(getAccessToken(request));
+        Optional<MyQuest> findQuest = myQuestRepository.findByMemberIdAndQuestId(memberId, 2L);
+
+        if (findQuest.isEmpty()) {
+            List<Quest> questList = questRepositoy.findAll();
+            questList.stream().forEach(value -> {
+                MyQuest myQuest = MyQuest.builder()
+                        .quest(value)
+                        .memberId(memberId)
+                        .build();
+                myQuestRepository.save(myQuest);
+            });
+        }
+        MyQuest findAttractionQuest = myQuestRepository.findByMemberIdAndQuestId(memberId, 2L).get();
+
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
+
+        if(findAttractionQuest.getClearTime() != null){
+            if (findAttractionQuest.getClearTime().isBefore(today6h)){
+                findAttractionQuest.setClearTime(LocalDateTime.now());
+            }
+        }else {
+            findAttractionQuest.setClearTime(LocalDateTime.now());
+        }
+        myQuestRepository.save(findAttractionQuest);
     }
 
     /* 헤더 Authorization 파싱 */
