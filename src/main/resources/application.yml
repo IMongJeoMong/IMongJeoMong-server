@@ -17,17 +17,6 @@ spring:
       hibernate:
         format_sql: true
 
-#cloud:
-#  aws:
-#    s3:
-#      bucket: imongjeomong
-#    stack.auto: false
-#    region.static: ap-northeast-2
-#    credentials:
-#      accessKey: AKIA2SPMQZMSTNI5E6JU
-#      secretKey: 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
-
-
 openData:
   tasu:
     serviceKey: HGWbiXI4puxU2CzKvcLxn5CesxFWEHG%2F49E1OBVZH4N3flzq0q%2B442V4Ii2Bk43fuLm0jmkitNv5Qaxxb1U6ag%3D%3D
