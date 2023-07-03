@@ -1,9 +1,12 @@
 package com.imongjeomong.imongjeomongserver.quest.model.service;
 
 import com.imongjeomong.imongjeomongserver.dto.MyQuestDTO;
+import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.entity.MyMong;
 import com.imongjeomong.imongjeomongserver.entity.MyQuest;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
+import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
 import com.imongjeomong.imongjeomongserver.quest.model.repository.MyQuestRepository;
 import com.imongjeomong.imongjeomongserver.quest.model.repository.QuestRepositoy;
 import com.imongjeomong.imongjeomongserver.util.JwtUtil;
@@ -12,21 +15,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class QuestServiceImpl implements QuestService{
+public class QuestServiceImpl implements QuestService {
 
     private final QuestRepositoy questRepositoy;
     private final MyQuestRepository myQuestRepository;
+    private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
-
 
     @Override
     public List<MyQuestDTO> getDailyQuestList(HttpServletRequest request) {
@@ -46,17 +48,39 @@ public class QuestServiceImpl implements QuestService{
             }
 
             MyQuestDTO myQuestDTO = MyQuestDTO.builder()
-                            .id(value.getId())
-                            .name(value.getQuest().getName())
-                            .exp(value.getQuest().getExp())
-                            .gold(value.getQuest().getGold())
-                            .clearFlag(clearFlag)
-                            .rewardFlag(rewardFlag).build();
+                    .id(value.getId())
+                    .name(value.getQuest().getName())
+                    .exp(value.getQuest().getExp())
+                    .gold(value.getQuest().getGold())
+                    .clearFlag(clearFlag)
+                    .rewardFlag(rewardFlag).build();
             myQuestDTOList.add(myQuestDTO);
         });
 
         return myQuestDTOList;
 
+    }
+
+    @Transactional
+    @Override
+    public void getQuestReward(HttpServletRequest request, Long myQuestId) {
+        String accessToken = getAccessToken(request);
+        Optional<Member> findMember = memberRepository.findById(jwtUtil.getMemberId(accessToken));
+        MyQuest findMyQuest = myQuestRepository.findById(myQuestId).get();
+        Member modifyMember = null;
+        if (findMember.isPresent()){
+            modifyMember = findMember.get();
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("gold", modifyMember.getGold() + findMyQuest.getQuest().getGold());
+            paramMap.put("updateTime", LocalDateTime.now());
+            MyMong selectedMong = modifyMember.getSelectedMong();
+            selectedMong.setExp(selectedMong.getExp() + findMyQuest.getQuest().getExp());
+            modifyMember.modifyValue(paramMap);
+            memberRepository.save(modifyMember);
+
+            findMyQuest.setRewardTime(LocalDateTime.now());
+            myQuestRepository.save(findMyQuest);
+        }
     }
 
     /* 헤더 Authorization 파싱 */
