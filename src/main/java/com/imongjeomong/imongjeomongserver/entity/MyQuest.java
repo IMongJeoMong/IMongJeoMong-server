@@ -24,7 +24,6 @@ public class MyQuest {
     @JoinColumn(name = "quest_id")
     private Quest quest;
     private LocalDateTime clearTime;
-
-    private String rewardFlag;
+    private LocalDateTime rewardTime;
 
 }

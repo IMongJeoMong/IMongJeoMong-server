@@ -22,7 +22,7 @@ public class QuestController {
     @GetMapping("/daily")
     public DataResponse<?> getDailyQuestList(HttpServletRequest request){
         DataResponse<List> dataResponse = new DataResponse<>(200, "일일 퀘스트 목록입니다.");
-        questServiceImpl.getDailyQuestList(request);
+        dataResponse.setData(questServiceImpl.getDailyQuestList(request));
         return dataResponse;
     }
 }
