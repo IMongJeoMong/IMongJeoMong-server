@@ -4,6 +4,7 @@ import com.imongjeomong.imongjeomongserver.dto.MyQuestDTO;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.entity.MyMong;
 import com.imongjeomong.imongjeomongserver.entity.MyQuest;
+import com.imongjeomong.imongjeomongserver.entity.Quest;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
@@ -30,32 +31,53 @@ public class QuestServiceImpl implements QuestService {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
 
+    @Transactional
     @Override
     public List<MyQuestDTO> getDailyQuestList(HttpServletRequest request) {
         String accessToken = getAccessToken(request);
         Long memberId = jwtUtil.getMemberId(accessToken);
         List<MyQuest> dailyQuestList = myQuestRepository.findAllByMemberId(memberId);
         List<MyQuestDTO> myQuestDTOList = new ArrayList<>();
-        dailyQuestList.stream().forEach(value -> {
-            boolean clearFlag = false;
-            if (value.getClearTime() != null) {
-                clearFlag = Duration.between(value.getClearTime(), LocalDateTime.now()).toHours() <= 24;
-            }
+        if (dailyQuestList.size() == 0) {
+            List<Quest> questList = questRepositoy.findAll();
+            questList.stream().forEach(value -> {
+                MyQuest myQuest = MyQuest.builder()
+                        .quest(value)
+                        .memberId(memberId).build();
+                MyQuest savedMyQuest = myQuestRepository.save(myQuest);
 
-            boolean rewardFlag = false;
-            if (value.getRewardTime() != null) {
-                rewardFlag = Duration.between(value.getRewardTime(), LocalDateTime.now()).toHours() <= 24;
-            }
+                MyQuestDTO myQuestDTO = MyQuestDTO.builder()
+                        .id(value.getId())
+                        .name(savedMyQuest.getQuest().getName())
+                        .exp(savedMyQuest.getQuest().getExp())
+                        .gold(savedMyQuest.getQuest().getGold())
+                        .clearFlag(false)
+                        .rewardFlag(false).build();
+                myQuestDTOList.add(myQuestDTO);
 
-            MyQuestDTO myQuestDTO = MyQuestDTO.builder()
-                    .id(value.getId())
-                    .name(value.getQuest().getName())
-                    .exp(value.getQuest().getExp())
-                    .gold(value.getQuest().getGold())
-                    .clearFlag(clearFlag)
-                    .rewardFlag(rewardFlag).build();
-            myQuestDTOList.add(myQuestDTO);
-        });
+            });
+        } else {
+            dailyQuestList.stream().forEach(value -> {
+                boolean clearFlag = false;
+                if (value.getClearTime() != null) {
+                    clearFlag = Duration.between(value.getClearTime(), LocalDateTime.now()).toHours() <= 24;
+                }
+
+                boolean rewardFlag = false;
+                if (value.getRewardTime() != null) {
+                    rewardFlag = Duration.between(value.getRewardTime(), LocalDateTime.now()).toHours() <= 24;
+                }
+
+                MyQuestDTO myQuestDTO = MyQuestDTO.builder()
+                        .id(value.getId())
+                        .name(value.getQuest().getName())
+                        .exp(value.getQuest().getExp())
+                        .gold(value.getQuest().getGold())
+                        .clearFlag(clearFlag)
+                        .rewardFlag(rewardFlag).build();
+                myQuestDTOList.add(myQuestDTO);
+            });
+        }
 
         return myQuestDTOList;
 
@@ -68,7 +90,7 @@ public class QuestServiceImpl implements QuestService {
         Optional<Member> findMember = memberRepository.findById(jwtUtil.getMemberId(accessToken));
         MyQuest findMyQuest = myQuestRepository.findById(myQuestId).get();
         Member modifyMember = null;
-        if (findMember.isPresent()){
+        if (findMember.isPresent()) {
             modifyMember = findMember.get();
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("gold", modifyMember.getGold() + findMyQuest.getQuest().getGold());
