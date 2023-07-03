@@ -12,4 +12,6 @@ public interface ItemService {
     ItemDto buyItem(Long memberId, Long itemId);
 
     List<ItemDto> getOwnItemList(Long memberId);
+
+    ItemDto getItemInfo(Long itemId);
 }

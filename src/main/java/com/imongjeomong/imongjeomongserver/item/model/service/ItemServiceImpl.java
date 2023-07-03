@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +79,13 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return itemList;
+    }
+
+    @Override
+    public ItemDto getItemInfo(Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND));
+        return item.toItemDto();
     }
 
     @Override
