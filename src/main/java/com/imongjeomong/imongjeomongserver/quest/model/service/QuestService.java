@@ -1,7 +1,10 @@
 package com.imongjeomong.imongjeomongserver.quest.model.service;
 
+import com.imongjeomong.imongjeomongserver.dto.MyQuestDTO;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface QuestService {
-    void getDailyQuestList(HttpServletRequest request);
+    List<MyQuestDTO> getDailyQuestList(HttpServletRequest request);
 }
