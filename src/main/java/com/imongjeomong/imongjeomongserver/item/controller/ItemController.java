@@ -87,4 +87,13 @@ public class ItemController {
 
         return response;
     }
+
+    @GetMapping("/item/{itemId}")
+    public DataResponse<ItemDto> getItemInfo(@PathVariable Long itemId) {
+        ItemDto itemDto = itemService.getItemInfo(itemId);
+
+        DataResponse<ItemDto> response = new DataResponse<>(200, "아이템 조회 성공");
+        response.setData(itemDto);
+        return response;
+    }
 }
