@@ -5,6 +5,8 @@ import com.imongjeomong.imongjeomongserver.entity.MyAttraction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,4 +17,7 @@ public interface MyAttractionRepository extends JpaRepository<MyAttraction, Long
     Page<MyAttractionDTO> findAllByMemberId(Long memberId, Pageable pageable);
 
     Optional<MyAttraction> findByMemberIdAndAttractionId(Long attractionId, Long memberId);
+
+    @Query("select count(m) from MyAttraction m where m.memberId = :member_id")
+    Long countByMemberId(@Param("member_id") Long memberId);
 }

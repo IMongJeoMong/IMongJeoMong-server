@@ -24,3 +24,16 @@ openData:
     serviceKey: 2SCrtJa2q0nUfUhgHMRiEsqJA4sGLiXD0aih2eXhem3ETCD8GhjlZ66%2FrncMbl3A12VywlgTNLrcNWKW%2B4K4kg%3D%3D
   attraction:
     serviceKey: HGWbiXI4puxU2CzKvcLxn5CesxFWEHG%2F49E1OBVZH4N3flzq0q%2B442V4Ii2Bk43fuLm0jmkitNv5Qaxxb1U6ag%3D%3D
+
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA2SPMQZMSTNI5E6JU
+      secret-key: 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
+    s3:
+      bucket: imongjeomong
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
