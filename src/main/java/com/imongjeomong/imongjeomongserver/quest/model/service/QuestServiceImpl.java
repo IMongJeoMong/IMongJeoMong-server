@@ -59,13 +59,16 @@ public class QuestServiceImpl implements QuestService {
         } else {
             dailyQuestList.stream().forEach(value -> {
                 boolean clearFlag = false;
+                LocalDateTime today = LocalDateTime.now();
+                LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
+
                 if (value.getClearTime() != null) {
-                    clearFlag = Duration.between(value.getClearTime(), LocalDateTime.now()).toHours() <= 24;
+                    clearFlag = value.getClearTime().isAfter(today6h);
                 }
 
                 boolean rewardFlag = false;
                 if (value.getRewardTime() != null) {
-                    rewardFlag = Duration.between(value.getRewardTime(), LocalDateTime.now()).toHours() <= 24;
+                    rewardFlag = value.getRewardTime().isAfter(today6h);
                 }
 
                 MyQuestDTO myQuestDTO = MyQuestDTO.builder()
@@ -78,7 +81,6 @@ public class QuestServiceImpl implements QuestService {
                 myQuestDTOList.add(myQuestDTO);
             });
         }
-
         return myQuestDTOList;
 
     }
@@ -101,6 +103,7 @@ public class QuestServiceImpl implements QuestService {
             memberRepository.save(modifyMember);
 
             findMyQuest.setRewardTime(LocalDateTime.now());
+            findMyQuest.setCount(findMyQuest.getCount() + 1);
             myQuestRepository.save(findMyQuest);
         }
     }
