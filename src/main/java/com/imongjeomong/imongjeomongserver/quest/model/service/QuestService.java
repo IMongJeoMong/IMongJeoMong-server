@@ -12,4 +12,6 @@ public interface QuestService {
     void getQuestReward(HttpServletRequest request, Long myQuestId);
 
     void attendMember(Long id);
+
+    void attendAttraction(HttpServletRequest request);
 }
