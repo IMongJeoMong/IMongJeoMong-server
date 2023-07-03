@@ -10,4 +10,6 @@ public interface QuestService {
     List<MyQuestDTO> getDailyQuestList(HttpServletRequest request);
 
     void getQuestReward(HttpServletRequest request, Long myQuestId);
+
+    void attendMember(Long id);
 }
