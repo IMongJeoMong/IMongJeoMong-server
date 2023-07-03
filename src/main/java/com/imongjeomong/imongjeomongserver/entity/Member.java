@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -59,7 +60,8 @@ public class Member {
         if (paramMap.containsKey("birth")) this.birth = LocalDate.parse(paramMap.get("birth").toString());
         if (paramMap.containsKey("gender")) this.gender = (String) paramMap.get("gender");
         if (paramMap.containsKey("sidoCode")) this.sidoCode = (int) paramMap.get("sidoCode");
-
+        if (paramMap.containsKey("gold")) this.gold = (int) paramMap.get("gold");
+        if (paramMap.containsKey("updateTime")) this.editTime.setUpdateTime((LocalDateTime) paramMap.get("updateTime"));
         if (paramMap.containsKey("selectedMong")) this.selectedMong = (MyMong) paramMap.get("selectedMong");
         if (paramMap.containsKey("selectedItem")) this.selectedItem = (MyItem) paramMap.get("selectedItem");
         if (paramMap.containsKey("selectedBackground")) this.selectedBackground = (MyBackground) paramMap.get("selectedBackground");
