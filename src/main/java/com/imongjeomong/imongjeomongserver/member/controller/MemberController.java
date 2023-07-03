@@ -4,6 +4,7 @@ import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.member.model.service.MemberService;
+import com.imongjeomong.imongjeomongserver.quest.model.service.QuestService;
 import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
 import com.imongjeomong.imongjeomongserver.util.JwtUtil;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -22,13 +22,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberService memberServiceImpl;
+    private final QuestService questServiceImpl;
     private final JwtUtil jwtUtil;
 
     /* 회원가입 */
     @PostMapping("/signup")
     public CommonResponse signUp(@RequestBody Member member) {
-        memberService.signUp(member);
+        memberServiceImpl.signUp(member);
         return new CommonResponse(201, "회원가입이 완료되었습니다.");
     }
 
@@ -36,19 +37,19 @@ public class MemberController {
     @DeleteMapping("/drop")
     public CommonResponse drop(HttpServletRequest request) {
         String accessToken = getAccessToken(request);
-        memberService.drop(jwtUtil.getMemberId(accessToken));
+        memberServiceImpl.drop(jwtUtil.getMemberId(accessToken));
         return new CommonResponse(200, "회원탈퇴가 완료되었습니다.");
     }
-
-
 
     /* 로그인 */
     @PostMapping("/login")
     public DataResponse<?> login(@RequestBody Member member) {
-        Member loginMember = memberService.login(member).get();
+        Member loginMember = memberServiceImpl.login(member).get();
         DataResponse<Map> dataResponse = new DataResponse<>(200, "인증되었습니다.");
-
         Map<String, Object> map = new HashMap<>();
+
+        questServiceImpl.attendMember(loginMember.getId());
+
         map.put("Authorization", getToken(loginMember.getId()));
         loginMember.privateInformationProcessing();
         map.put("LoginMember", loginMember);
@@ -59,7 +60,7 @@ public class MemberController {
     /* 회원조회 */
     @GetMapping("/{email}")
     public DataResponse<?> getMemberInfo(@PathVariable String email){
-        Member findMember = memberService.getMemberByEmail(email).get();
+        Member findMember = memberServiceImpl.getMemberByEmail(email).get();
         findMember.privateInformationProcessing();
 
         DataResponse<Member> response = new DataResponse<>(200, "회원 정보가 조회되었습니다.");
@@ -73,7 +74,7 @@ public class MemberController {
         String accessToken = getAccessToken(request);
         paramMap.put("id", jwtUtil.getMemberId(accessToken));
         DataResponse<Member> dataResponse = new DataResponse<>(200, "회원 정보가 수정되었습니다.");
-        memberService.modify(paramMap).ifPresent((modifyMember) -> {
+        memberServiceImpl.modify(paramMap).ifPresent((modifyMember) -> {
             modifyMember.privateInformationProcessing();
             dataResponse.setData(modifyMember);
         });

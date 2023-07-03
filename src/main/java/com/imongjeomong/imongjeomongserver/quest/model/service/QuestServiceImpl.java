@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -54,7 +53,6 @@ public class QuestServiceImpl implements QuestService {
                         .clearFlag(false)
                         .rewardFlag(false).build();
                 myQuestDTOList.add(myQuestDTO);
-
             });
         } else {
             dailyQuestList.stream().forEach(value -> {
@@ -105,6 +103,31 @@ public class QuestServiceImpl implements QuestService {
             findMyQuest.setRewardTime(LocalDateTime.now());
             findMyQuest.setCount(findMyQuest.getCount() + 1);
             myQuestRepository.save(findMyQuest);
+        }
+    }
+
+    @Override
+    public void attendMember(Long memberId) {
+        Optional<MyQuest> findQuest = myQuestRepository.findByMemberIdAndQuestId(memberId, 1L);
+
+        if (findQuest.isEmpty()) {
+            List<Quest> questList = questRepositoy.findAll();
+            questList.stream().forEach(value -> {
+                MyQuest myQuest = MyQuest.builder()
+                        .quest(value)
+                        .memberId(memberId)
+                        .build();
+                myQuestRepository.save(myQuest);
+            });
+        }
+        MyQuest findAttendQuest = myQuestRepository.findByMemberIdAndQuestId(memberId, 1L).get();
+
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
+
+        if (findAttendQuest.getClearTime().isBefore(today6h)){
+            findAttendQuest.setClearTime(LocalDateTime.now());
+            myQuestRepository.save(findAttendQuest);
         }
     }
 
