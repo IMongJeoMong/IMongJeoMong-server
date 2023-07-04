@@ -1,11 +1,11 @@
 package com.imongjeomong.imongjeomongserver.member.model.service;
 
 import com.imongjeomong.imongjeomongserver.entity.Member;
-import com.imongjeomong.imongjeomongserver.entity.MyMong;
 import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
+import com.imongjeomong.imongjeomongserver.item.model.repository.MyItemRepository;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
 import com.imongjeomong.imongjeomongserver.mong.model.repository.MyMongRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final MyMongRepository myMongRepository;
 
-//    private final MyItemRepository myItemRepository;
+    private final MyItemRepository myItemRepository;
 //    private final MyBackgroundRepository myBackgroundRepository;
 
     @Transactional
@@ -89,24 +89,28 @@ public class MemberServiceImpl implements MemberService {
     public Optional<Member> modify(Map<String, Object> paramMap) {
         Member modifyMember = memberRepository.findById(Long.parseLong(paramMap.get("id").toString()))
                 .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL)
-        );
+                );
 
         if (paramMap.containsKey("selected_mong_id")) {
             myMongRepository.findById(Long.parseLong(paramMap.get("selected_mong_id").toString()))
                     .ifPresent((myMong) -> paramMap.put("selectedMong", myMong));
         }
 
-        /* 추후 아이템 / 배경 구현 시 주석 해제
         if (paramMap.containsKey("selected_item_id")) {
-            paramMap.put("selectedItem", myMongRepository.findById(
-                    Long.parseLong(paramMap.get("selected_item_id").toString())));
+            myItemRepository.findById(Long.parseLong(paramMap.get("selected_item_id").toString()))
+                    .ifPresentOrElse(
+                            (myItem) -> paramMap.put("selectedItem", myItem.toMyItemDto()),
+                            () -> {
+                                throw new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND);
+                            }
+                    );
         }
 
-        if (paramMap.containsKey("selected_background_id")) {
-            paramMap.put("selectedBackground", myMongRepository.findById(
-                    Long.parseLong(paramMap.get("selected_background_id").toString())));
-        }
-        */
+//        추후 아이템 / 배경 구현 시 주석 해제
+//        if (paramMap.containsKey("selected_background_id")) {
+//            paramMap.put("selectedBackground", myBackgroundRepository.findById(
+//                    Long.parseLong(paramMap.get("selected_background_id").toString())));
+//        }
 
         modifyMember.modifyValue(paramMap);
         modifyMember.getEditTime().setUpdateTime(LocalDateTime.now());
