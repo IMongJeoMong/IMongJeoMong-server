@@ -35,8 +35,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
     // JWT
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-    // aws cloud
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 }
 
 tasks.named('test') {
