@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.review.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class ReviewController {
 
     private final AmazonS3Client amazonS3Client;
+    private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -47,6 +49,18 @@ public class ReviewController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PostMapping("/aws/saveFile")
+    public String saveFile(@RequestParam("file") MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        metadata.setContentType(file.getContentType());
+
+        amazonS3.putObject(bucket, originalFilename, file.getInputStream(), metadata);
+        return amazonS3.getUrl(bucket, originalFilename).toString();
     }
 
 }

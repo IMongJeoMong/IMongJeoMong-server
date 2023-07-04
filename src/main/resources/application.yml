@@ -29,8 +29,8 @@ openData:
 cloud:
   aws:
     credentials:
-      access-key: AKIA2SPMQZMSTNI5E6JU
-      secret-key: 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
+      access-key: AKIA2SPMQZMSZJ2JE7BE
+      secret-key: 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
     s3:
       bucket: imongjeomong
     region:
