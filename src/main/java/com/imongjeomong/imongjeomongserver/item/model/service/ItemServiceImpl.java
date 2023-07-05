@@ -1,6 +1,7 @@
 package com.imongjeomong.imongjeomongserver.item.model.service;
 
 import com.imongjeomong.imongjeomongserver.dto.ItemDto;
+import com.imongjeomong.imongjeomongserver.dto.MyItemDto;
 import com.imongjeomong.imongjeomongserver.entity.Item;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.entity.MyItem;
@@ -86,6 +87,12 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND));
         return item.toItemDto();
+    }
+
+    public MyItemDto getMyItemById(Long myItemId){
+        MyItem myItem = myItemRepository.findById(myItemId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND));
+        return myItem.toMyItemDto();
     }
 
     @Override

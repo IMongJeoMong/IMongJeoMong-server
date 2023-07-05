@@ -12,15 +12,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AttractionRepository extends JpaRepository<Attraction,Long> {
 
-    @Query("SELECT new com.imongjeomong.imongjeomongserver.dto.AttractionDTO(" +
+    @Query(value = "SELECT new com.imongjeomong.imongjeomongserver.dto.AttractionDTO(" +
             "a.id, a.name, a.address, a.lat, a.lng, a.description, a.contentTypeId, a.imagePath, " +
             "a.tel, a.sidoCode, a.gold, a.exp, " +
             "SQRT(POW(a.lat - :lat , 2) + POW(a.lng - :lng , 2)) AS distance )" +
             " FROM Attraction a " +
             "WHERE a.name LIKE CONCAT('%', :keyword, '%' ) " +
-            "ORDER BY distance")
+            "ORDER BY distance",
+            countQuery = "SELECT COUNT(*) From Attraction a")
     Page<AttractionDTO> findAttractionByCondition(@Param("keyword") String keyword,
-                                                  @Param("lat") double lat,
-                                                  @Param("lng") double lng,
+                                                  @Param("lat") Double lat,
+                                                  @Param("lng") Double lng,
                                                   Pageable pageable);
 }

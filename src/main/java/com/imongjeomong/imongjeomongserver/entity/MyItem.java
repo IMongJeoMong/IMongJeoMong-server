@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
+import com.imongjeomong.imongjeomongserver.dto.MyItemDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,4 +26,11 @@ public class MyItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    public MyItemDto toMyItemDto(){
+        return MyItemDto.builder()
+                .myItemId(this.id)
+                .memberId(this.member.getId())
+                .itemDto(this.item.toItemDto()).build();
+    }
 }
