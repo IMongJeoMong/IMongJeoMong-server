@@ -26,6 +26,5 @@ public class MyAchievement {
     @JoinColumn(name = "achievement_id")
     private Achievement achievement;
 
-    private int count;
     private boolean getState;
 }

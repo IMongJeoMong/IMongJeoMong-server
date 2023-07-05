@@ -90,6 +90,7 @@ public class QuestServiceImpl implements QuestService {
         Optional<Member> findMember = memberRepository.findById(jwtUtil.getMemberId(accessToken));
         MyQuest findMyQuest = myQuestRepository.findById(myQuestId).get();
         Member modifyMember = null;
+
         if (findMember.isPresent()) {
             modifyMember = findMember.get();
             Map<String, Object> paramMap = new HashMap<>();
