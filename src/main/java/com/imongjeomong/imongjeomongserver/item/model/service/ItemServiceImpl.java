@@ -96,6 +96,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public MyItemDto getSelectedItemById(Long selectedItemId) {
+        return myItemRepository.findById(selectedItemId).orElse(null).toMyItemDto();
+    }
+
+    @Override
     @Transactional
     public ItemDto buyItem(Long memberId, Long itemId) {
         /*
