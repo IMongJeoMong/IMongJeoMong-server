@@ -22,7 +22,6 @@ public class Achievement {
     private Long id;
 
     private String name;
-    private String description;
     private int gold;
     private int exp;
 
