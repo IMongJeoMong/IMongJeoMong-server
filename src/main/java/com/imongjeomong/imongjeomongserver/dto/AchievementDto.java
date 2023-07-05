@@ -10,4 +10,10 @@ import lombok.*;
 @ToString
 public class AchievementDto {
     private Long achievementId;
+    private String name;
+    private int gold;
+    private int exp;
+
+    private Long count;
+    private boolean getState;
 }
