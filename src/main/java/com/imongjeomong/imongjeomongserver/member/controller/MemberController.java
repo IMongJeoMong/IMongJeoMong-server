@@ -1,8 +1,10 @@
 package com.imongjeomong.imongjeomongserver.member.controller;
 
+import com.imongjeomong.imongjeomongserver.dto.MemberDto;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
+import com.imongjeomong.imongjeomongserver.item.model.service.ItemService;
 import com.imongjeomong.imongjeomongserver.member.model.service.MemberService;
 import com.imongjeomong.imongjeomongserver.quest.model.service.QuestService;
 import com.imongjeomong.imongjeomongserver.response.CommonResponse;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberServiceImpl;
+    private final ItemService itemService;
     private final QuestService questServiceImpl;
     private final JwtUtil jwtUtil;
 
@@ -51,8 +54,21 @@ public class MemberController {
         questServiceImpl.attendMember(loginMember.getId());
 
         map.put("Authorization", getToken(loginMember.getId()));
-        loginMember.privateInformationProcessing();
-        map.put("LoginMember", loginMember);
+
+        MemberDto memberDto = MemberDto.builder()
+                .memberId(loginMember.getId())
+                .email(loginMember.getEmail())
+                .nickname(loginMember.getNickname())
+                .birth(loginMember.getBirth())
+                .gender(loginMember.getGender())
+                .sidoCode(loginMember.getSidoCode())
+                .gold(loginMember.getGold())
+                .selectedMong(loginMember.getSelectedMong().toMyMongDto())
+                .selectedItem(itemService.getMyItemById(loginMember.getSelectedItemId()))
+                .selectedBackground(null)
+                .build();
+
+        map.put("LoginMember", memberDto);
         dataResponse.setData(map);
         return dataResponse;
     }
@@ -73,10 +89,22 @@ public class MemberController {
     public DataResponse<?> modifyMember(@RequestBody Map<String, Object> paramMap, HttpServletRequest request){
         String accessToken = getAccessToken(request);
         paramMap.put("id", jwtUtil.getMemberId(accessToken));
-        DataResponse<Member> dataResponse = new DataResponse<>(200, "회원 정보가 수정되었습니다.");
+        DataResponse<MemberDto> dataResponse = new DataResponse<>(200, "회원 정보가 수정되었습니다.");
         memberServiceImpl.modify(paramMap).ifPresent((modifyMember) -> {
-            modifyMember.privateInformationProcessing();
-            dataResponse.setData(modifyMember);
+            MemberDto modifyMemberDto = MemberDto.builder()
+                    .memberId(modifyMember.getId())
+                    .email(modifyMember.getEmail())
+                    .nickname(modifyMember.getNickname())
+                    .birth(modifyMember.getBirth())
+                    .gender(modifyMember.getGender())
+                    .sidoCode(modifyMember.getSidoCode())
+                    .gold(modifyMember.getGold())
+                    .selectedMong(modifyMember.getSelectedMong().toMyMongDto())
+                    .selectedItem(itemService.getMyItemById(modifyMember.getSelectedItemId()))
+                    .selectedBackground(null)
+                    .build();
+
+            dataResponse.setData(modifyMemberDto);
         });
         return dataResponse;
     }

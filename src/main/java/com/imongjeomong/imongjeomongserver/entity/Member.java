@@ -40,9 +40,8 @@ public class Member {
     @JoinColumn(name = "selected_mong_id")
     private MyMong selectedMong;
 
-    @OneToOne
     @JoinColumn(name = "selected_item_id")
-    private MyItem selectedItem;
+    private Long selectedItemId;
 
     @OneToOne
     @JoinColumn(name = "selected_background_id")
@@ -63,7 +62,7 @@ public class Member {
         if (paramMap.containsKey("gold")) this.gold = (int) paramMap.get("gold");
         if (paramMap.containsKey("updateTime")) this.editTime.setUpdateTime((LocalDateTime) paramMap.get("updateTime"));
         if (paramMap.containsKey("selectedMong")) this.selectedMong = (MyMong) paramMap.get("selectedMong");
-        if (paramMap.containsKey("selectedItem")) this.selectedItem = (MyItem) paramMap.get("selectedItem");
+        if (paramMap.containsKey("selectedItemId")) this.selectedItemId = (Long) paramMap.get("selectedItemId");
         if (paramMap.containsKey("selectedBackground")) this.selectedBackground = (MyBackground) paramMap.get("selectedBackground");
     }
 }
