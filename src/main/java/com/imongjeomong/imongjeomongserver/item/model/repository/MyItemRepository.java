@@ -1,7 +1,7 @@
 package com.imongjeomong.imongjeomongserver.item.model.repository;
 
-import com.imongjeomong.imongjeomongserver.entity.Item;
 import com.imongjeomong.imongjeomongserver.entity.MyItem;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +18,8 @@ public interface MyItemRepository extends JpaRepository<MyItem, Long> {
 
     @Query("select count(m) from MyItem m where m.member.id = :member_id")
     Long countByMemberId(@Param("member_id") Long memberId);
+
+    @NotNull
+    @Query("SELECT m from MyItem m JOIN FETCH m.item WHERE m.id = :myItemId")
+    Optional<MyItem> findById(@NotNull Long myItemId);
 }

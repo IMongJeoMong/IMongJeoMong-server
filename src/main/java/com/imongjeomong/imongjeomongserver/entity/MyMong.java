@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
+import com.imongjeomong.imongjeomongserver.dto.MyMongDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,4 +23,13 @@ public class MyMong {
 
     private int level;
     private int exp;
+
+    public MyMongDto toMyMongDto() {
+        return MyMongDto.builder()
+                .myMongId(this.getId())
+                .mong(this.getMong())
+                .level(this.getLevel())
+                .exp(this.getExp())
+                .build();
+    }
 }
