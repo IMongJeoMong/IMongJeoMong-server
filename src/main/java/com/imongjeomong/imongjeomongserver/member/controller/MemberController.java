@@ -64,7 +64,7 @@ public class MemberController {
                 .sidoCode(loginMember.getSidoCode())
                 .gold(loginMember.getGold())
                 .selectedMong(loginMember.getSelectedMong().toMyMongDto())
-                .selectedItem(itemService.getMyItemById(loginMember.getSelectedItemId()))
+                .selectedItem(itemService.getSelectedItemById(loginMember.getSelectedItemId()))
                 .selectedBackground(null)
                 .build();
 
@@ -77,10 +77,22 @@ public class MemberController {
     @GetMapping("/{email}")
     public DataResponse<?> getMemberInfo(@PathVariable String email){
         Member findMember = memberServiceImpl.getMemberByEmail(email).get();
-        findMember.privateInformationProcessing();
 
-        DataResponse<Member> response = new DataResponse<>(200, "회원 정보가 조회되었습니다.");
-        response.setData(findMember);
+        DataResponse<MemberDto> response = new DataResponse<>(200, "회원 정보가 조회되었습니다.");
+
+        MemberDto memberDto = MemberDto.builder()
+                .memberId(findMember.getId())
+                .email(findMember.getEmail())
+                .nickname(findMember.getNickname())
+                .birth(findMember.getBirth())
+                .gender(findMember.getGender())
+                .sidoCode(findMember.getSidoCode())
+                .gold(findMember.getGold())
+                .selectedMong(findMember.getSelectedMong().toMyMongDto())
+                .selectedItem(itemService.getSelectedItemById(findMember.getSelectedItemId()))
+                .selectedBackground(null)
+                .build();
+        response.setData(memberDto);
         return response;
     }
 
@@ -100,7 +112,7 @@ public class MemberController {
                     .sidoCode(modifyMember.getSidoCode())
                     .gold(modifyMember.getGold())
                     .selectedMong(modifyMember.getSelectedMong().toMyMongDto())
-                    .selectedItem(itemService.getMyItemById(modifyMember.getSelectedItemId()))
+                    .selectedItem(itemService.getSelectedItemById(modifyMember.getSelectedItemId()))
                     .selectedBackground(null)
                     .build();
 
