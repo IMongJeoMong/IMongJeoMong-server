@@ -99,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
         if (paramMap.containsKey("selected_item_id")) {
             myItemRepository.findById(Long.parseLong(paramMap.get("selected_item_id").toString()))
                     .ifPresentOrElse(
-                            (myItem) -> paramMap.put("selectedItem", myItem.toMyItemDto()),
+                            (myItem) -> paramMap.put("selectedItemId", myItem.getId()),
                             () -> {
                                 throw new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND);
                             }
