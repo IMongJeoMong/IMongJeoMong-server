@@ -17,4 +17,6 @@ public interface ItemService {
     ItemDto getItemInfo(Long itemId);
 
     MyItemDto getMyItemById(Long myItemId);
+
+    MyItemDto getSelectedItemById(Long selectedItemId);
 }
