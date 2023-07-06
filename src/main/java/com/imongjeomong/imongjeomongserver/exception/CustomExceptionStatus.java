@@ -28,6 +28,9 @@ public enum CustomExceptionStatus {
     ITEM_DUPLICATE(-6001, "이미 구매한 아이템입니다."),
     MEMBER_NOT_ENOUGH_GOLD(-6002, "현재 가지고 있는 골드가 부족합니다."),
 
+    // Background가 존재하지 않을 때 에러
+    BACKGROUND_NOT_FOUND(-6100, "배경이 존재하지 않습니다"),
+
     // 업적 관련 에러메시지
     ACHIEVEMENT_NOT_FOUND(-6200, "해당하는 업적이 존재하지 않습니다."),
     ACHIEVEMENT_ALREADY_GET(-6201, "해당하는 업적의 보상을 이미 받았습니다."),

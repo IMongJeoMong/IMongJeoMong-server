@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
+import com.imongjeomong.imongjeomongserver.dto.MyBackgroundDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,4 +22,12 @@ public class MyBackground {
     @JoinColumn(name = "background_id")
     private Background background;
 
+    public MyBackgroundDto toMyBackgroundDto(){
+        return MyBackgroundDto.builder()
+                .myBackgroundId(this.getId())
+                .name(this.getBackground().getName())
+                .price(this.getBackground().getPrice())
+                .imagePath(this.getBackground().getImagePath())
+                .build();
+    }
 }
