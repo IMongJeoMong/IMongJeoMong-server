@@ -30,6 +30,7 @@ public class MyItem {
     public MyItemDto toMyItemDto(){
         return MyItemDto.builder()
                 .myItemId(this.id)
+                .itemId(this.item.getId())
                 .name(this.item.getName())
                 .price(this.item.getPrice())
                 .shopImagePath(this.item.getShopImagePath())

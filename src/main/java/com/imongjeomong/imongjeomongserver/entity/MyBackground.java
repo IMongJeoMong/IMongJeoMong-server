@@ -25,6 +25,7 @@ public class MyBackground {
     public MyBackgroundDto toMyBackgroundDto(){
         return MyBackgroundDto.builder()
                 .myBackgroundId(this.getId())
+                .backgroundId(this.background.getId())
                 .name(this.getBackground().getName())
                 .price(this.getBackground().getPrice())
                 .imagePath(this.getBackground().getImagePath())
