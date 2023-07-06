@@ -1,6 +1,5 @@
 package com.imongjeomong.imongjeomongserver.dto;
 
-import com.imongjeomong.imongjeomongserver.entity.Mong;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,8 +11,10 @@ import lombok.Setter;
 public class MyMongDto {
 
     private Long myMongId;
-    private Mong mong;
+    private String name;
     private int level;
     private int exp;
+    private String imagePath;
+    private String description;
 
 }
