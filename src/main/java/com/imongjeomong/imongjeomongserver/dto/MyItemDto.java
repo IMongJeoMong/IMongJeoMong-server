@@ -14,5 +14,4 @@ public class MyItemDto {
     private int price;
     private String shopImagePath;
     private String charImagePath;
-    private boolean isOwn;
 }
