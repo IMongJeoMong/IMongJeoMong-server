@@ -26,10 +26,14 @@ public enum CustomExceptionStatus {
     // Item 이 존재하지 않을 떄의 에러
     ITEM_NOT_FOUND(-6000, "아이템이 존재하지 않습니다."),
     ITEM_DUPLICATE(-6001, "이미 구매한 아이템입니다."),
-
     MEMBER_NOT_ENOUGH_GOLD(-6002, "현재 가지고 있는 골드가 부족합니다."),
 
+    // 업적 관련 에러메시지
+    ACHIEVEMENT_NOT_FOUND(-6200, "해당하는 업적이 존재하지 않습니다."),
+    ACHIEVEMENT_ALREADY_GET(-6201, "해당하는 업적의 보상을 이미 받았습니다."),
+
     ATTRACTION_NOT_FOUND(-7000, "관광지가 존재하지 않습니다."),
+
     ATTRACTION_NOT_A_DAY_PASSED(-7001, "하루가 지나지 않았습니다."),
 
     /* 위의 어떤 것에도 해당하지 않는 에러 */
