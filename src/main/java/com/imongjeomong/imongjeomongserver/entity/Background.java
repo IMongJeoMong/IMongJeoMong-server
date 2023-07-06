@@ -27,6 +27,7 @@ public class Background {
                 .backgroundId(this.getId())
                 .name(this.getName())
                 .price(this.getPrice())
+                .imagePath(this.getImagePath())
                 .build();
     }
 }
