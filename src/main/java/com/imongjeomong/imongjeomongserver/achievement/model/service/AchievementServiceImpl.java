@@ -7,6 +7,7 @@ import com.imongjeomong.imongjeomongserver.dto.AchievementDto;
 import com.imongjeomong.imongjeomongserver.entity.Achievement;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.entity.MyAchievement;
+import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.item.model.repository.ItemRepository;
@@ -110,5 +111,26 @@ public class AchievementServiceImpl implements AchievementService {
         }
 
         return resultList;
+    }
+
+    /**
+     * 업적 보상받기 버튼 클릭시 반영해주는 메서드
+     */
+    @Override
+    @Transactional
+    public void setGetState(Long memberId, Long achievementId) {
+        // 보상을 받으면 -> 골드 증가, state 상태 세팅
+        MyAchievement myAchievement = myAchievementRepository.findByMemberIdAndAchievementId(memberId, achievementId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.ACHIEVEMENT_NOT_FOUND));
+
+        // 이미 보상을 받았다면 예외 발생
+        if (myAchievement.isGetState()) throw new CommonException(CustomExceptionStatus.ACHIEVEMENT_ALREADY_GET);
+
+        // 골드 증가
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
+        member.setGold(member.getGold() + myAchievement.getAchievement().getGold());
+
+        myAchievement.setGetState(true);
     }
 }

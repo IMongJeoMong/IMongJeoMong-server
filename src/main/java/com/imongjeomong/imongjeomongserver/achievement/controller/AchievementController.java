@@ -9,6 +9,8 @@ import com.imongjeomong.imongjeomongserver.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,5 +39,20 @@ public class AchievementController {
         DataResponse<List<AchievementDto>> response = new DataResponse<>(200, "업적 리스트 조회 성공");
         response.setData(myAchievementList);
         return response;
+    }
+
+    @PostMapping("/achievement/get/{achievementId}")
+    public DataResponse<String> getState(HttpServletRequest request, @PathVariable Long achievementId) {
+        String accessToken = "";
+        Long memberId = null;
+        try {
+            accessToken = request.getHeader("Authorization").split(" ")[1];
+            memberId = jwtUtil.getMemberId(accessToken);
+        } catch (NullPointerException e) {
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
+
+        achievementService.setGetState(memberId, achievementId);
+        return new DataResponse<String>(200, "업적 상태 저장 성공");
     }
 }
