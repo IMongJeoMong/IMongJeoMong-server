@@ -1,13 +1,19 @@
 package com.imongjeomong.imongjeomongserver.member.model.service;
 
+import com.imongjeomong.imongjeomongserver.background.model.repository.BackgroundRepository;
 import com.imongjeomong.imongjeomongserver.background.model.repository.MyBackgroundRepository;
 import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.entity.MyBackground;
+import com.imongjeomong.imongjeomongserver.entity.MyItem;
+import com.imongjeomong.imongjeomongserver.entity.MyMong;
 import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
+import com.imongjeomong.imongjeomongserver.item.model.repository.ItemRepository;
 import com.imongjeomong.imongjeomongserver.item.model.repository.MyItemRepository;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
+import com.imongjeomong.imongjeomongserver.mong.model.repository.MongRepository;
 import com.imongjeomong.imongjeomongserver.mong.model.repository.MyMongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +31,12 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    private final MyMongRepository myMongRepository;
 
+    private final MongRepository mongRepository;
+    private final ItemRepository itemRepository;
+    private final BackgroundRepository backgroundRepository;
+
+    private final MyMongRepository myMongRepository;
     private final MyItemRepository myItemRepository;
     private final MyBackgroundRepository myBackgroundRepository;
 
@@ -45,7 +55,35 @@ public class MemberServiceImpl implements MemberService {
                 );
 
         try {
-            memberRepository.save(member);
+            Member signedUpmember = memberRepository.save(member);
+
+            MyMong myMong = new MyMong();
+            myMong.setMemberId(member.getId());
+            myMong.setMong(mongRepository.findById(1L).orElseThrow(
+                    () -> new CommonException(CustomExceptionStatus.MONG_DOES_NOT_EXISTS)
+            ));
+            myMong.setExp(0);
+            myMong.setLevel(0);
+            MyMong defaultMong = myMongRepository.save(myMong);
+            signedUpmember.setSelectedMong(defaultMong);
+
+            MyItem myItem = new MyItem();
+            myItem.setMember(signedUpmember);
+            myItem.setItem(itemRepository.findById(0L).orElseThrow(
+                    ()-> new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND))
+            );
+            myItemRepository.save(myItem);
+
+            signedUpmember.setSelectedItemId(myItem.getId());
+
+            MyBackground myBackground = new MyBackground();
+            myBackground.setMember(signedUpmember);
+            myBackground.setBackground(backgroundRepository.findById(1L).orElseThrow(
+                    () ->  new CommonException(CustomExceptionStatus.BACKGROUND_NOT_FOUND))
+            );
+            myBackgroundRepository.save(myBackground);
+            signedUpmember.setSelectedBackgroundId(myBackground.getId());
+
         } catch (DataIntegrityViolationException e) {
             throw new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_NON_NULL_PROPERTY);
         } catch (Exception e) {
