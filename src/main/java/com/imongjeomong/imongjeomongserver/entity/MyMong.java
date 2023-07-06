@@ -27,9 +27,11 @@ public class MyMong {
     public MyMongDto toMyMongDto() {
         return MyMongDto.builder()
                 .myMongId(this.getId())
-                .mong(this.getMong())
+                .name(this.getMong().getName())
                 .level(this.getLevel())
                 .exp(this.getExp())
+                .imagePath(this.getMong().getImagePath())
+                .description(this.getMong().getDescription())
                 .build();
     }
 }
