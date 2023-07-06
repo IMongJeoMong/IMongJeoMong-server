@@ -97,7 +97,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public MyItemDto getSelectedItemById(Long selectedItemId) {
-        return myItemRepository.findById(selectedItemId).orElse(null).toMyItemDto();
+        MyItem myItem = myItemRepository.findById(selectedItemId).orElse(null);
+        if (myItem != null) return myItem.toMyItemDto();
+        return null;
     }
 
     @Override
