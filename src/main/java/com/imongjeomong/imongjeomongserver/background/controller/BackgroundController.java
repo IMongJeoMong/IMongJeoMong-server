@@ -2,6 +2,7 @@ package com.imongjeomong.imongjeomongserver.background.controller;
 
 import com.imongjeomong.imongjeomongserver.background.model.service.BackgroundService;
 import com.imongjeomong.imongjeomongserver.dto.BackgroundDto;
+import com.imongjeomong.imongjeomongserver.dto.MyBackgroundDto;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -24,5 +26,13 @@ public class BackgroundController {
         DataResponse<List<BackgroundDto>> dataResponse = new DataResponse<>(200, "배경이 조회되었습니다.");
         dataResponse.setData(backgroundServiceImpl.getBackgroundList());
         return dataResponse;
+    }
+
+    @GetMapping("/own/list")
+    public DataResponse<?> getMyBackgroundList(HttpServletRequest request){
+        DataResponse<List<MyBackgroundDto>> dataResponse = new DataResponse<>(200, "보유한 배경이 조회되었습니다.");
+        dataResponse.setData(backgroundServiceImpl.getMyBackgroundList(request));
+        return dataResponse;
+
     }
 }
