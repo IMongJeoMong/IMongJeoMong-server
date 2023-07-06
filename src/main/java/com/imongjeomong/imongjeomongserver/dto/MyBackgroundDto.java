@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter @Setter
 public class MyBackgroundDto {
     private Long myBackgroundId;
+    private Long backgroundId;
     private String name;
     private int price;
     private String imagePath;
