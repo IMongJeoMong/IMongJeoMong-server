@@ -36,9 +36,8 @@ public class BackgroundServiceImpl implements BackgroundService {
     }
 
     @Override
-    public List<MyBackgroundDto> getMyBackgroundList(HttpServletRequest request) {
+    public List<MyBackgroundDto> getMyBackgroundList(Long memberId) {
         List<MyBackgroundDto> myBackgroundDtoList = new ArrayList<>();
-        Long memberId = jwtUtil.getMemberId(jwtUtil.getAccessToken(request));
         myBackgroundRepository.findAllByMemberId(memberId).forEach(myBackground ->
             myBackgroundDtoList.add(myBackground.toMyBackgroundDto())
         );
@@ -54,8 +53,7 @@ public class BackgroundServiceImpl implements BackgroundService {
     }
 
     @Override
-    public MyBackgroundDto getMyBackgroundById(HttpServletRequest request, Long myBackgroundId) {
-        Long memberId = jwtUtil.getMemberId(jwtUtil.getAccessToken(request));
+    public MyBackgroundDto getSelectedBackgroundById(Long memberId, Long myBackgroundId) {
         MyBackground myBackground = myBackgroundRepository.findByIdAndMemberId(myBackgroundId, memberId)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.BACKGROUND_NOT_FOUND));
         return myBackground.toMyBackgroundDto();

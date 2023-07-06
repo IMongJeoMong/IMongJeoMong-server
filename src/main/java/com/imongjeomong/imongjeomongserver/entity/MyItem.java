@@ -33,6 +33,7 @@ public class MyItem {
                 .name(this.item.getName())
                 .price(this.item.getPrice())
                 .shopImagePath(this.item.getShopImagePath())
-                .shopImagePath(this.item.getCharImagePath()).build();
+                .charImagePath(this.item.getCharImagePath())
+                .build();
     }
 }
