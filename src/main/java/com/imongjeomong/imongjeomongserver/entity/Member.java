@@ -43,9 +43,8 @@ public class Member {
     @JoinColumn(name = "selected_item_id")
     private Long selectedItemId;
 
-    @OneToOne
     @JoinColumn(name = "selected_background_id")
-    private MyBackground selectedBackground;
+    private Long selectedBackgroundId;
 
     @Embedded
     private EditTime editTime;
@@ -63,6 +62,6 @@ public class Member {
         if (paramMap.containsKey("updateTime")) this.editTime.setUpdateTime((LocalDateTime) paramMap.get("updateTime"));
         if (paramMap.containsKey("selectedMong")) this.selectedMong = (MyMong) paramMap.get("selectedMong");
         if (paramMap.containsKey("selectedItemId")) this.selectedItemId = (Long) paramMap.get("selectedItemId");
-        if (paramMap.containsKey("selectedBackground")) this.selectedBackground = (MyBackground) paramMap.get("selectedBackground");
+        if (paramMap.containsKey("selectedBackgroundId")) this.selectedBackgroundId = (Long) paramMap.get("selectedBackgroundId");
     }
 }

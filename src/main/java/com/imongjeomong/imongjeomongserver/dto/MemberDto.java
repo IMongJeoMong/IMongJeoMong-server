@@ -1,6 +1,5 @@
 package com.imongjeomong.imongjeomongserver.dto;
 
-import com.imongjeomong.imongjeomongserver.entity.MyBackground;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +23,6 @@ public class MemberDto {
 
     private MyMongDto selectedMong;
     private MyItemDto selectedItem;
-    private MyBackground selectedBackground;
+    private MyBackgroundDto selectedBackground;
 
 }
