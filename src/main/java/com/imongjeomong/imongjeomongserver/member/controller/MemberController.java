@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.member.controller;
 
+import com.imongjeomong.imongjeomongserver.background.model.service.BackgroundService;
 import com.imongjeomong.imongjeomongserver.dto.MemberDto;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
@@ -26,6 +27,7 @@ public class MemberController {
 
     private final MemberService memberServiceImpl;
     private final ItemService itemService;
+    private final BackgroundService backgroundServiceImpl;
     private final QuestService questServiceImpl;
     private final JwtUtil jwtUtil;
 
@@ -65,8 +67,10 @@ public class MemberController {
                 .gold(loginMember.getGold())
                 .selectedMong(loginMember.getSelectedMong().toMyMongDto())
                 .selectedItem(itemService.getSelectedItemById(loginMember.getSelectedItemId()))
-                .selectedBackground(null)
-                .build();
+                .selectedBackground(backgroundServiceImpl.getSelectedBackgroundById(
+                        loginMember.getId(),
+                        loginMember.getSelectedBackgroundId())
+                ).build();
 
         map.put("LoginMember", memberDto);
         dataResponse.setData(map);
@@ -90,7 +94,10 @@ public class MemberController {
                 .gold(findMember.getGold())
                 .selectedMong(findMember.getSelectedMong().toMyMongDto())
                 .selectedItem(itemService.getSelectedItemById(findMember.getSelectedItemId()))
-                .selectedBackground(null)
+                .selectedBackground(backgroundServiceImpl.getSelectedBackgroundById(
+                        findMember.getId(),
+                        findMember.getSelectedBackgroundId()
+                ))
                 .build();
         response.setData(memberDto);
         return response;
@@ -113,8 +120,10 @@ public class MemberController {
                     .gold(modifyMember.getGold())
                     .selectedMong(modifyMember.getSelectedMong().toMyMongDto())
                     .selectedItem(itemService.getSelectedItemById(modifyMember.getSelectedItemId()))
-                    .selectedBackground(null)
-                    .build();
+                    .selectedBackground(backgroundServiceImpl.getSelectedBackgroundById(
+                            modifyMember.getId(),
+                            modifyMember.getSelectedBackgroundId())
+                    ).build();
 
             dataResponse.setData(modifyMemberDto);
         });

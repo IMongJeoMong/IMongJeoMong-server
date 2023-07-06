@@ -4,6 +4,7 @@ import com.imongjeomong.imongjeomongserver.background.model.service.BackgroundSe
 import com.imongjeomong.imongjeomongserver.dto.BackgroundDto;
 import com.imongjeomong.imongjeomongserver.dto.MyBackgroundDto;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
+import com.imongjeomong.imongjeomongserver.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import java.util.List;
 public class BackgroundController {
 
     private final BackgroundService backgroundServiceImpl;
+    private final JwtUtil jwtUtil;
 
     /* 전체 배경 리스트 조회 */
     @GetMapping("/list")
@@ -34,7 +36,7 @@ public class BackgroundController {
     @GetMapping("/own/list")
     public DataResponse<?> getMyBackgroundList(HttpServletRequest request) {
         DataResponse<List<MyBackgroundDto>> dataResponse = new DataResponse<>(200, "보유한 배경이 조회되었습니다.");
-        dataResponse.setData(backgroundServiceImpl.getMyBackgroundList(request));
+        dataResponse.setData(backgroundServiceImpl.getMyBackgroundList(jwtUtil.getMemberId(jwtUtil.getAccessToken(request))));
         return dataResponse;
     }
 
@@ -50,7 +52,8 @@ public class BackgroundController {
     @GetMapping("/own/{myBackgroundId}")
     public DataResponse<?> getMyBackgroundById(@PathVariable Long myBackgroundId, HttpServletRequest request) {
         DataResponse<MyBackgroundDto> dataResponse = new DataResponse<>(200, "보유한 배경이 조회되었습니다");
-        dataResponse.setData(backgroundServiceImpl.getMyBackgroundById(request, myBackgroundId));
+        dataResponse.setData(backgroundServiceImpl.getSelectedBackgroundById(
+                jwtUtil.getMemberId(jwtUtil.getAccessToken(request)), myBackgroundId));
         return dataResponse;
     }
 }
