@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.entity;
 
+import com.imongjeomong.imongjeomongserver.dto.BackgroundDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +19,14 @@ public class Background {
     private Long id;
 
     private String name;
-    private String price;
+    private int price;
     private String imagePath;
 
+    public BackgroundDto toBackgroundDto(){
+        return BackgroundDto.builder()
+                .backgroundId(this.getId())
+                .name(this.getName())
+                .price(this.getPrice())
+                .build();
+    }
 }
