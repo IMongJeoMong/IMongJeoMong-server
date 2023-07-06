@@ -1,6 +1,7 @@
 package com.imongjeomong.imongjeomongserver.util;
 
 import com.imongjeomong.imongjeomongserver.entity.Member;
+import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.member.model.service.MemberServiceImpl;
@@ -95,4 +96,16 @@ public class JwtUtil {
             throw new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_TOKEN_VALIDATION_FAILED);
         }
     }
+
+    /* 헤더 Authorization 파싱 */
+    public String getAccessToken(HttpServletRequest request) {
+        String accessToken = "";
+        try {
+            accessToken = request.getHeader("Authorization").split(" ")[1];
+        }catch (NullPointerException e){
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
+        return accessToken;
+    }
+
 }
