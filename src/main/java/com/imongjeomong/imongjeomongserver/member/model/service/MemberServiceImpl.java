@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.member.model.service;
 
+import com.imongjeomong.imongjeomongserver.background.model.repository.MyBackgroundRepository;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
@@ -27,7 +28,7 @@ public class MemberServiceImpl implements MemberService {
     private final MyMongRepository myMongRepository;
 
     private final MyItemRepository myItemRepository;
-//    private final MyBackgroundRepository myBackgroundRepository;
+    private final MyBackgroundRepository myBackgroundRepository;
 
     @Transactional
     @Override
@@ -106,11 +107,15 @@ public class MemberServiceImpl implements MemberService {
                     );
         }
 
-//        추후 아이템 / 배경 구현 시 주석 해제
-//        if (paramMap.containsKey("selected_background_id")) {
-//            paramMap.put("selectedBackground", myBackgroundRepository.findById(
-//                    Long.parseLong(paramMap.get("selected_background_id").toString())));
-//        }
+        if (paramMap.containsKey("selected_background_id")) {
+            myBackgroundRepository.findById(Long.parseLong(paramMap.get("selected_background_id").toString()))
+                    .ifPresentOrElse(
+                            (myBackground) -> paramMap.put("selectedBackgroundId", myBackground.getId()),
+                            () -> {
+                                throw new CommonException(CustomExceptionStatus.BACKGROUND_NOT_FOUND);
+                            }
+                    );
+        }
 
         modifyMember.modifyValue(paramMap);
         modifyMember.getEditTime().setUpdateTime(LocalDateTime.now());
