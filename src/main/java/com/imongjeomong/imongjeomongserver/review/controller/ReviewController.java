@@ -52,7 +52,6 @@ public class ReviewController {
             throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
         }
 
-
     }
 
 }
