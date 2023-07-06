@@ -10,4 +10,8 @@ public interface BackgroundService {
     List<BackgroundDto> getBackgroundList();
 
     List<MyBackgroundDto> getMyBackgroundList(HttpServletRequest request);
+
+    BackgroundDto getBackgroundById(Long backgroundId);
+
+    MyBackgroundDto getMyBackgroundById(HttpServletRequest request, Long myBackgroundId);
 }
