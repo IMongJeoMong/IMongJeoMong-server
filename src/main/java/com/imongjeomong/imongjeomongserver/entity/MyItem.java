@@ -30,7 +30,9 @@ public class MyItem {
     public MyItemDto toMyItemDto(){
         return MyItemDto.builder()
                 .myItemId(this.id)
-                .memberId(this.member.getId())
-                .itemDto(this.item.toItemDto()).build();
+                .name(this.item.getName())
+                .price(this.item.getPrice())
+                .shopImagePath(this.item.getShopImagePath())
+                .shopImagePath(this.item.getCharImagePath()).build();
     }
 }
