@@ -10,6 +10,7 @@ import lombok.ToString;
 @ToString
 public class MyItemDto {
     private Long myItemId;
+    private Long itemId;
     private String name;
     private int price;
     private String shopImagePath;

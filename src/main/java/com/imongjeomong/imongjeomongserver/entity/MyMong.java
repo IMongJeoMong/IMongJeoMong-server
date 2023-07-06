@@ -27,6 +27,7 @@ public class MyMong {
     public MyMongDto toMyMongDto() {
         return MyMongDto.builder()
                 .myMongId(this.getId())
+                .mongId(this.mong.getId())
                 .name(this.getMong().getName())
                 .level(this.getLevel())
                 .exp(this.getExp())

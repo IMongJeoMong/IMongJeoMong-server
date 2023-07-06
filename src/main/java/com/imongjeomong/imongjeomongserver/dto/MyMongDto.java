@@ -11,6 +11,7 @@ import lombok.Setter;
 public class MyMongDto {
 
     private Long myMongId;
+    private Long mongId;
     private String name;
     private int level;
     private int exp;
