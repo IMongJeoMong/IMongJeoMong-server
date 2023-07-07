@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +14,10 @@ public interface MyItemRepository extends JpaRepository<MyItem, Long> {
 
     List<MyItem> findByMemberId(Long memberId);
 
-    @Query("select m from MyItem m where m.item.id = :itemId")
-    Optional<MyItem> findByItem(@Param("itemId") Long itemId);
+    @Query("select m from MyItem m where m.item.id = :itemId and m.member.id = :memberId")
+    Optional<MyItem> findByItem(@Param("itemId") Long itemId, @Param("memberId") Long memberId);
+
+    Optional<MyItem> findByItemIdAndMemberId(Long itemId, Long memberId);
 
     @Query("select count(m) from MyItem m where m.member.id = :member_id")
     Long countByMemberId(@Param("member_id") Long memberId);
