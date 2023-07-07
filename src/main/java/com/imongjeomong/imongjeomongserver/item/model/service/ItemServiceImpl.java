@@ -127,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         // 2. 중복 구매 방지 로직
-        myItemRepository.findByItem(itemId).ifPresent(i -> {
+        myItemRepository.findByItemIdAndMemberId(itemId, memberId).ifPresent(i -> {
             log.error("{} 중복 구매 시도", member.getEmail());
             throw new CommonException(CustomExceptionStatus.ITEM_DUPLICATE);
         });
