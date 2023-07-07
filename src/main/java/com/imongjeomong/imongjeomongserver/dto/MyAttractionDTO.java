@@ -1,7 +1,9 @@
 package com.imongjeomong.imongjeomongserver.dto;
 
-import com.imongjeomong.imongjeomongserver.entity.Attraction;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +25,7 @@ public class MyAttractionDTO {
     private String tel;
     private int gold;
     private int exp;
-
+    private boolean isWrote;
     private int count;
     private LocalDateTime visitTime;
 }
