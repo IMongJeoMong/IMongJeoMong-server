@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -41,6 +39,7 @@ public class MongServiceImpl implements MongService{
 
     @Override
     public List<MyMongDto> getMyMongList(Long memberId) {
+        log.info("=== {} === ", memberId);
         List<MyMongDto> myMongDtoList = new ArrayList<>();
         myMongRepository.findAllByMemberId(memberId).stream().forEach(
                 (myMong) -> myMongDtoList.add(myMong.toMyMongDto())

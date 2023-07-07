@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MyMongRepository extends JpaRepository<MyMong, Long> {
-    @Query("SELECT m from MyMong m JOIN FETCH m.mong")
+    @Query("SELECT m from MyMong m JOIN FETCH m.mong WHERE m.memberId = :memberId")
     List<MyMong> findAllByMemberId(Long memberId);
 
     @Query("SELECT m from MyMong m JOIN FETCH m.mong WHERE m.id = :myMongId")
