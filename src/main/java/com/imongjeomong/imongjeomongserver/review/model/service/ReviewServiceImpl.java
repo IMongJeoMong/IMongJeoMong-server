@@ -9,6 +9,7 @@ import com.imongjeomong.imongjeomongserver.entity.ReviewImage;
 import com.imongjeomong.imongjeomongserver.entity.common.EditTime;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
+import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
 import com.imongjeomong.imongjeomongserver.review.model.repository.ReviewImageRepository;
 import com.imongjeomong.imongjeomongserver.review.model.repository.ReviewRepository;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -85,6 +87,55 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return resultList;
+    }
+
+
+    /**
+     * 리뷰 수정 로직
+     */
+    @Override
+    @Transactional
+    public void updateReview(Long memberId, Long reviewId, MultipartFile image, String content) throws IOException {
+        // 회원, 리뷰 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.REVIEW_NOT_FOUND));
+
+        // 리뷰 수정
+        if (image != null) {
+            List<ReviewImage> reviewImageList = reviewImageRepository.findByReviewId(review.getId());
+            String imageUrl = awsS3Util.s3SaveFile(image);
+            reviewImageList.get(0).setImagePath(imageUrl);
+        }
+
+        review.setContent(content);
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long memberId, Long reviewId) {
+        // 회원, 리뷰, 리뷰이미지 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.REVIEW_NOT_FOUND));
+
+        List<ReviewImage> reviewImageList = reviewImageRepository.findByReviewId(review.getId());
+
+        // 작성자와 삭제요청한 아이디가 다를 경우 예외처리
+        if (!Objects.equals(member.getId(), review.getMember().getId())) {
+            throw new CommonException(CustomExceptionStatus.REVIEW_MEMBER_NOT_MACHED);
+        }
+
+        // 리뷰와 이미지 제거
+        if (reviewImageList != null) {
+            reviewImageRepository.deleteAllInBatch(reviewImageList);
+        }
+        reviewRepository.delete(review);
+
     }
 
 }

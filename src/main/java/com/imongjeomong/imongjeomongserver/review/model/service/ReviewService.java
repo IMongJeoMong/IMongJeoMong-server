@@ -10,4 +10,8 @@ public interface ReviewService {
     void saveReview(ReviewDto reviewDto, MultipartFile image) throws IOException;
 
     List<ReviewDto> getReviewList(Long attractionId);
+
+    void updateReview(Long memberId, Long reviewId, MultipartFile image, String content) throws IOException;
+
+    void deleteReview(Long memberId, Long reviewId);
 }
