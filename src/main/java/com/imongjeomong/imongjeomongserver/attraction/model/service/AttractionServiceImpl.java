@@ -8,6 +8,7 @@ import com.imongjeomong.imongjeomongserver.entity.Attraction;
 import com.imongjeomong.imongjeomongserver.entity.MyAttraction;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
+import com.imongjeomong.imongjeomongserver.review.model.repository.ReviewRepository;
 import com.imongjeomong.imongjeomongserver.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class AttractionServiceImpl implements AttractionService {
 
     private final AttractionRepository attractionRepository;
     private final MyAttractionRepository myAttractionRepository;
+    private final ReviewRepository reviewRepository;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -61,13 +63,23 @@ public class AttractionServiceImpl implements AttractionService {
         return attractionDTO;
     }
 
+    @Transactional
     @Override
     public List<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable) {
-        String accessToken = getAccessToken(request);
         List<MyAttractionDTO> myAttractionList = new ArrayList<>();
 
-        myAttractionRepository.findAllByMemberId(jwtUtil.getMemberId(accessToken), pageable).stream().forEach(
-                myAttraction -> myAttractionList.add(myAttraction.toMyAttractionDto())
+        Long memberId = jwtUtil.getMemberId(getAccessToken(request));
+        myAttractionRepository.findAllByMemberId(memberId, pageable).stream().forEach(
+                myAttraction -> {
+                    MyAttractionDTO myAttractionDTO = myAttraction.toMyAttractionDto();
+
+                    if (reviewRepository.findByAttractionIdAndMemberId(myAttraction.getAttraction().getId(), memberId).size() > 0) {
+                        myAttractionDTO.setWrote(true);
+                    }else {
+                        myAttractionDTO.setWrote(false);
+                    }
+                    myAttractionList.add(myAttractionDTO);
+                }
         );
         return myAttractionList;
     }
