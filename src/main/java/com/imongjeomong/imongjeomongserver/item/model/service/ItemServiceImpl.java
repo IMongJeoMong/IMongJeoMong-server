@@ -40,6 +40,7 @@ public class ItemServiceImpl implements ItemService {
             Item curItem = m.getItem();
             ItemDto itemDto = curItem.toItemDto();
             itemDto.setOwn(true);
+            itemDto.setMyItemId(m.getId());
             itemList.add(itemDto);
         }
 
@@ -70,13 +71,16 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDto> myItemList = getMyItemList(memberId);
         List<ItemDto> itemList = getItemList();
 
-        Set<Long> myItemKey = new HashSet<>();
+        Map<Long, Long> myItemMap = new HashMap<>();
         for (ItemDto itemDto : myItemList) {
-            myItemKey.add(itemDto.getItemId());
+            myItemMap.put(itemDto.getItemId(), itemDto.getMyItemId());
         }
 
         for (ItemDto itemDto : itemList) {
-            if (myItemKey.contains(itemDto.getItemId())) itemDto.setOwn(true);
+            if (myItemMap.containsKey(itemDto.getItemId())) {
+                itemDto.setOwn(true);
+                itemDto.setMyItemId(myItemMap.get(itemDto.getItemId()));
+            }
         }
 
         return itemList;
@@ -89,7 +93,7 @@ public class ItemServiceImpl implements ItemService {
         return item.toItemDto();
     }
 
-    public MyItemDto getMyItemById(Long myItemId){
+    public MyItemDto getMyItemById(Long myItemId) {
         MyItem myItem = myItemRepository.findById(myItemId)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.ITEM_NOT_FOUND));
         return myItem.toMyItemDto();
