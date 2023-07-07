@@ -30,6 +30,7 @@ public class MongController {
         return dataResponse;
     }
 
+    /* 보유한 몽 리스트 조회 */
     @GetMapping("/own/list")
     public DataResponse<?> getMyMongList(HttpServletRequest request) {
         DataResponse<List<MyMongDto>> dataResponse =new DataResponse<>(201, "보유 몽 리스트를 조회합니다.");
