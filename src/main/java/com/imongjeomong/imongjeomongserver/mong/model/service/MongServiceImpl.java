@@ -1,5 +1,6 @@
 package com.imongjeomong.imongjeomongserver.mong.model.service;
 
+import com.imongjeomong.imongjeomongserver.dto.MyMongDto;
 import com.imongjeomong.imongjeomongserver.entity.Mong;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
@@ -12,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -25,7 +28,7 @@ public class MongServiceImpl implements MongService{
     private final JwtUtil jwtUtil;
 
     @Override
-    public Map<String, Object> getMongList(HttpServletRequest request) {
+    public List<Mong> getMongList(HttpServletRequest request) {
         String accessToken = "";
         try {
             accessToken = request.getHeader("Authorization").split(" ")[1];
@@ -33,12 +36,19 @@ public class MongServiceImpl implements MongService{
             throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
         }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("mongList", mongRepository.findAll());
-        map.put("myMongList", myMongRepository.findAllByMemberId(jwtUtil.getMemberId(accessToken)));
-
-        return map;
+        return mongRepository.findAll();
     }
+
+    @Override
+    public List<MyMongDto> getMyMongList(Long memberId) {
+        List<MyMongDto> myMongDtoList = new ArrayList<>();
+        myMongRepository.findAllByMemberId(memberId).stream().forEach(
+                (myMong) -> myMongDtoList.add(myMong.toMyMongDto())
+        );
+
+        return myMongDtoList;
+    }
+
 
     @Override
     public Mong getMongById(Long mongId) {
@@ -47,4 +57,6 @@ public class MongServiceImpl implements MongService{
         );
         return findMong;
     }
+
+
 }
