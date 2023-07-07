@@ -166,6 +166,23 @@ public class QuestServiceImpl implements QuestService {
         myQuestRepository.save(findAttractionQuest);
     }
 
+    @Override
+    public void writeReviewQuest(Long memberId) {
+        MyQuest findReviewQuest = myQuestRepository.findByMemberIdAndQuestId(memberId, 3L)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.QUEST_NOT_FOUND));
+
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
+
+        if (findReviewQuest.getClearTime() != null) {
+            if (findReviewQuest.getClearTime().isBefore(today6h)) {
+                findReviewQuest.setClearTime(LocalDateTime.now());
+            }
+        } else {
+            findReviewQuest.setClearTime(LocalDateTime.now());
+        }
+    }
+
     /* 헤더 Authorization 파싱 */
     private static String getAccessToken(HttpServletRequest request) {
         String accessToken = "";

@@ -36,8 +36,10 @@ public enum CustomExceptionStatus {
     ACHIEVEMENT_ALREADY_GET(-6201, "해당하는 업적의 보상을 이미 받았습니다."),
 
     ATTRACTION_NOT_FOUND(-7000, "관광지가 존재하지 않습니다."),
-
     ATTRACTION_NOT_A_DAY_PASSED(-7001, "하루가 지나지 않았습니다."),
+
+    // Quest 관련
+    QUEST_NOT_FOUND(-8000, "퀘스트가 존재하지 않습니다"),
 
     /* 위의 어떤 것에도 해당하지 않는 에러 */
     COMMON_EXCEPTION(-9999, "예외가 발생하였습니다.");

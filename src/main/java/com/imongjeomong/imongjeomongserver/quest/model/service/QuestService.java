@@ -14,4 +14,6 @@ public interface QuestService {
     void attendMember(Long id);
 
     void attendAttraction(HttpServletRequest request);
+
+    void writeReviewQuest(Long memberId);
 }
