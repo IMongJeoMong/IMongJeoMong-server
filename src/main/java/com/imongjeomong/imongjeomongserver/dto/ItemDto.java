@@ -10,6 +10,7 @@ import lombok.*;
 @ToString
 public class ItemDto {
     private Long itemId;
+    private Long myItemId;
     private String name;
     private int price;
     private String shopImagePath;
