@@ -15,7 +15,8 @@ public interface AttractionRepository extends JpaRepository<Attraction,Long> {
     @Query(value = "SELECT new com.imongjeomong.imongjeomongserver.dto.AttractionDTO(" +
             "a.id, a.name, a.address, a.lat, a.lng, a.description, a.contentTypeId, a.imagePath, " +
             "a.tel, a.sidoCode, a.gold, a.exp, " +
-            "SQRT(POW(a.lat - :lat , 2) + POW(a.lng - :lng , 2)) AS distance )" +
+            "(6371 * 2 * ASIN(SQRT(POWER(SIN((:lat - a.lat) * pi()/180 / 2), 2) + " +
+            "COS(:lat * pi()/180) * COS(a.lat * pi()/180) * POWER(SIN((:lng - a.lng) * pi()/180 / 2), 2)))) * 1000 AS distance )" +
             " FROM Attraction a " +
             "WHERE a.name LIKE CONCAT('%', :keyword, '%' ) " +
             "ORDER BY distance",
