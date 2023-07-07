@@ -16,5 +16,5 @@ public interface AttractionService {
 
     Page<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable);
 
-    void visitAttraction(Long attractionId, HttpServletRequest request);
+    void visitAttraction(Long attractionId, HttpServletRequest request, Map<String, Object> paramMap);
 }
