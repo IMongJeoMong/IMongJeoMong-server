@@ -15,6 +15,7 @@ public class MyMongDto {
     private String name;
     private int level;
     private int exp;
+    private int expPercent;
     private String imagePath;
     private String description;
 
