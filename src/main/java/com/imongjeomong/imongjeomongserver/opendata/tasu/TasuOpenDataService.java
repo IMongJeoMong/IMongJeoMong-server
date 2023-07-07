@@ -21,10 +21,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableTransactionManagement
 @Slf4j
-public class TasuService {
+public class TasuOpenDataService {
 
     private final String tasuOpenDataUrl = "https://apis.data.go.kr/6300000/openapi2022/tasuInfo/gettasuInfo";
-    private final TasuRepository tasuRepository;
+    private final TasuOpenDataRepository tasuOpenDataRepository;
 
     @Value("${openData.tasu.serviceKey}")
     private String serviceKey;
@@ -37,7 +37,7 @@ public class TasuService {
     @Transactional
     public void saveTasuInfo() throws UnsupportedEncodingException {
         // 기존 데이터 제거
-        tasuRepository.deleteAll();
+        tasuOpenDataRepository.deleteAll();
 
         // tasu 데이터 total count 가져오기
         int count = getTasuTotalCount();
@@ -48,7 +48,7 @@ public class TasuService {
 
         // 불러온 모든 tasu 데이터를 db에 저장하기
         for (int i = 0; i < tasuInfo.size(); i++) {
-            tasuRepository.save(tasuInfo.get(i));
+            tasuOpenDataRepository.save(tasuInfo.get(i));
         }
 
         log.debug("Tasu 데이터 저장 완료");
