@@ -64,7 +64,7 @@ public class ReviewController {
      * review 가져오기 (R)
      */
     @GetMapping("/review/{attractionId}")
-    private DataResponse<List<ReviewDto>> getReviewList(@PathVariable Long attractionId) {
+    public DataResponse<?> getReviewList(@PathVariable Long attractionId) {
         List<ReviewDto> reviewDtoList = reviewService.getReviewList(attractionId);
 
         DataResponse<List<ReviewDto>> response = new DataResponse<>(200, "리뷰 리스트 조회 성공");
@@ -76,8 +76,27 @@ public class ReviewController {
     /**
      * review 수정 (U)
      */
+    @PatchMapping("/review/{reviewId}")
+    public CommonResponse updateReview(HttpServletRequest request,
+                                       @ModelAttribute MultipartFile image,
+                                       @PathVariable Long reviewId, String content) throws IOException {
+        Long memberId = jwtUtil.getMemberId(jwtUtil.getAccessToken(request));
+
+        reviewService.updateReview(memberId, reviewId, image, content);
+
+        return new CommonResponse(201, "리뷰 수정 성공");
+    }
+
 
     /**
      * review 삭제 (D)
      */
+    @DeleteMapping("/review/{reviewId}")
+    public CommonResponse deleteReview(HttpServletRequest request, @PathVariable Long reviewId) {
+        Long memberId = jwtUtil.getMemberId(jwtUtil.getAccessToken(request));
+
+        reviewService.deleteReview(memberId, reviewId);
+        return new CommonResponse(201, "리뷰 삭제 성공");
+    }
+
 }

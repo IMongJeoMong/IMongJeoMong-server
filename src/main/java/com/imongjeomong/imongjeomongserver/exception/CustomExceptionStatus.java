@@ -35,6 +35,11 @@ public enum CustomExceptionStatus {
     ACHIEVEMENT_NOT_FOUND(-6200, "해당하는 업적이 존재하지 않습니다."),
     ACHIEVEMENT_ALREADY_GET(-6201, "해당하는 업적의 보상을 이미 받았습니다."),
 
+    // 리뷰 관련 에러
+    REVIEW_NOT_FOUND(-6500, "리뷰가 존재하지 않습니다."),
+    REVIEW_MEMBER_NOT_MACHED(-6501, "리뷰작성자와 멤버가 다릅니다."),
+
+    // 관광지 관련 에러메시지
     ATTRACTION_NOT_FOUND(-7000, "관광지가 존재하지 않습니다."),
     ATTRACTION_NOT_A_DAY_PASSED(-7001, "하루가 지나지 않았습니다."),
     ATTRACTION_SEARCH_FAILED(-7002, "관광지 탐색에 실패하였습니다."),
