@@ -25,12 +25,14 @@ public class MyMong {
     private int exp;
 
     public MyMongDto toMyMongDto() {
+        int percent = (this.exp % 1000) * 100 / 1000;
         return MyMongDto.builder()
                 .myMongId(this.getId())
                 .mongId(this.mong.getId())
                 .name(this.getMong().getName())
                 .level(this.getLevel())
                 .exp(this.getExp())
+                .expPercent(percent)
                 .imagePath(this.getMong().getImagePath())
                 .description(this.getMong().getDescription())
                 .build();
