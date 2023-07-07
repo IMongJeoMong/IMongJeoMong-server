@@ -40,6 +40,7 @@ public enum CustomExceptionStatus {
 
     // Quest 관련
     QUEST_NOT_FOUND(-8000, "퀘스트가 존재하지 않습니다"),
+    QUEST_REWARD_NOT_A_DAY_PASSED(-8001, "오늘 보상을 이미 획득했습니다."),
 
     /* 위의 어떤 것에도 해당하지 않는 에러 */
     COMMON_EXCEPTION(-9999, "예외가 발생하였습니다.");

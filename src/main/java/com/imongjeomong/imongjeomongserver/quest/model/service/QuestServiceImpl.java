@@ -88,7 +88,19 @@ public class QuestServiceImpl implements QuestService {
     public void getQuestReward(HttpServletRequest request, Long myQuestId) {
         String accessToken = getAccessToken(request);
         Optional<Member> findMember = memberRepository.findById(jwtUtil.getMemberId(accessToken));
-        MyQuest findMyQuest = myQuestRepository.findById(myQuestId).get();
+        MyQuest findMyQuest = myQuestRepository.findById(myQuestId).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.QUEST_NOT_FOUND));
+
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
+
+        // 오늘 이미 보상을 받았다면 안내 문구 반환
+        if (findMyQuest.getRewardTime() != null) {
+            if (findMyQuest.getRewardTime().isAfter(today6h)){
+                throw new CommonException(CustomExceptionStatus.QUEST_REWARD_NOT_A_DAY_PASSED);
+            }
+        }
+
         Member modifyMember = null;
 
         if (findMember.isPresent()) {
