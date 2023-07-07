@@ -27,5 +27,5 @@ public class MyAttractionDTO {
     private int exp;
     private boolean isWrote;
     private int count;
-    private LocalDateTime visitTime;
+    private String visitTime;
 }
