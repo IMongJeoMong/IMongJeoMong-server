@@ -37,6 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final AwsS3Util awsS3Util;
 
     @Override
+    @Transactional
     public void saveReview(ReviewDto reviewDto, MultipartFile image) throws IOException {
         String imageUrl = awsS3Util.s3SaveFile(image);
 
