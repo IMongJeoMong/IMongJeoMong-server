@@ -68,9 +68,20 @@ public class AttractionServiceImpl implements AttractionService {
 
     @Transactional
     @Override
-    public void visitAttraction(Long attractionId, HttpServletRequest request) {
+    public void visitAttraction(Long attractionId, HttpServletRequest request, Map<String, Object> paramMap) {
         String accessToken = getAccessToken(request);
         Long memberId = jwtUtil.getMemberId(accessToken);
+
+        Double lat = Double.parseDouble(paramMap.get("lat").toString());
+        Double lng = Double.parseDouble(paramMap.get("lng").toString());
+        AttractionDTO attractionDTO = attractionRepository.findByAttractionId(attractionId, lat, lng).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND)
+        );
+        if (attractionDTO.getDistance() > 10) {
+            throw new CommonException(CustomExceptionStatus.ATTRACTION_SEARCH_FAILED);
+        }
+
+
         myAttractionRepository.findByMemberIdAndAttractionId(memberId, attractionId)
                 .ifPresentOrElse(
                         value -> { // 이미 방문한 적 있을 경우

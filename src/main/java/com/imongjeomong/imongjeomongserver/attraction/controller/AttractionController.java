@@ -2,6 +2,8 @@ package com.imongjeomong.imongjeomongserver.attraction.controller;
 
 import com.imongjeomong.imongjeomongserver.attraction.model.service.AttractionService;
 import com.imongjeomong.imongjeomongserver.dto.AttractionDTO;
+import com.imongjeomong.imongjeomongserver.exception.CommonException;
+import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.quest.model.service.QuestService;
 import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
@@ -50,8 +52,8 @@ public class AttractionController {
 
     /* 관광지 방문 */
     @PostMapping("/visit/{attractionId}")
-    public CommonResponse visitAttraction(@PathVariable Long attractionId, HttpServletRequest request) {
-        attractionService.visitAttraction(attractionId, request);
+    public CommonResponse visitAttraction(@PathVariable Long attractionId, @RequestParam Map<String, Object> paramMap, HttpServletRequest request) {
+        attractionService.visitAttraction(attractionId, request, paramMap);
         CommonResponse response = new CommonResponse(200, "방문 처리되었습니다.");
 
         questServiceImpl.attendAttraction(request);

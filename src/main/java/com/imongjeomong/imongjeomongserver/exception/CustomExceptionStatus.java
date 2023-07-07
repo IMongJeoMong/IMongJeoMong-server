@@ -37,6 +37,7 @@ public enum CustomExceptionStatus {
 
     ATTRACTION_NOT_FOUND(-7000, "관광지가 존재하지 않습니다."),
     ATTRACTION_NOT_A_DAY_PASSED(-7001, "하루가 지나지 않았습니다."),
+    ATTRACTION_SEARCH_FAILED(-7002, "관광지 탐색에 실패하였습니다."),
 
     // Quest 관련
     QUEST_NOT_FOUND(-8000, "퀘스트가 존재하지 않습니다"),
