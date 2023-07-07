@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
@@ -44,7 +45,7 @@ public class MyAttraction {
                 .gold(this.getAttraction().getGold())
                 .exp(this.getAttraction().getExp())
                 .count(this.getCount())
-                .visitTime(this.getVisitTime())
+                .visitTime(this.getVisitTime().format(DateTimeFormatter.ISO_DATE))
                 .build();
     }
 
