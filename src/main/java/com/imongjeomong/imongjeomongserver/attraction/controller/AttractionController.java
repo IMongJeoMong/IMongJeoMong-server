@@ -38,7 +38,7 @@ public class AttractionController {
     @GetMapping("/visited")
     public DataResponse<?> getMyAttractionList(HttpServletRequest request, Pageable pageable){
         DataResponse<List> dataResponse = new DataResponse<>(200, "방문했던 관광지가 조회되었습니다.");
-        dataResponse.setData(attractionService.getMyAttractionList(request, pageable).getContent());
+        dataResponse.setData(attractionService.getMyAttractionList(request, pageable));
         return dataResponse;
     }
 
