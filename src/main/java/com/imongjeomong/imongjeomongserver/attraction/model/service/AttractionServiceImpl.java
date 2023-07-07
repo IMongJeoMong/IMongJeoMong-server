@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -60,10 +62,14 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
-    public Page<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable) {
+    public List<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable) {
         String accessToken = getAccessToken(request);
-        return myAttractionRepository.findAllByMemberId(jwtUtil.getMemberId(accessToken), pageable);
+        List<MyAttractionDTO> myAttractionList = new ArrayList<>();
 
+        myAttractionRepository.findAllByMemberId(jwtUtil.getMemberId(accessToken), pageable).stream().forEach(
+                myAttraction -> myAttractionList.add(myAttraction.toMyAttractionDto())
+        );
+        return myAttractionList;
     }
 
     @Transactional

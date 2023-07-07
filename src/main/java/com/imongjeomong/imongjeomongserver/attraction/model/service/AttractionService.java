@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 public interface AttractionService {
@@ -14,7 +15,7 @@ public interface AttractionService {
 
     AttractionDTO getAttractionInfo(Long attractionId);
 
-    Page<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable);
+    List<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable);
 
     void visitAttraction(Long attractionId, HttpServletRequest request, Map<String, Object> paramMap);
 }
