@@ -4,6 +4,7 @@ package com.imongjeomong.imongjeomongserver.review.controller;
 import com.imongjeomong.imongjeomongserver.dto.ReviewDto;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
+import com.imongjeomong.imongjeomongserver.quest.model.service.QuestService;
 import com.imongjeomong.imongjeomongserver.response.CommonResponse;
 import com.imongjeomong.imongjeomongserver.response.DataResponse;
 import com.imongjeomong.imongjeomongserver.review.model.service.ReviewService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,11 +25,13 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final QuestService questServiceImpl;
     private final JwtUtil jwtUtil;
 
     /**
      * review 작성 (C)
      */
+    @Transactional
     @PostMapping("/review")
     public CommonResponse writeReview(HttpServletRequest request,
                                       @ModelAttribute MultipartFile image,
@@ -49,6 +53,9 @@ public class ReviewController {
                 .build();
 
         reviewService.saveReview(reviewDto, image);
+
+        // 리뷰 작성 퀘스트
+        questServiceImpl.writeReviewQuest(memberId);
 
         return new CommonResponse(200, "리뷰 저장 성공");
     }
