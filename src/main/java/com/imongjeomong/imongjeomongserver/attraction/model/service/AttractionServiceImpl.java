@@ -155,6 +155,7 @@ public class AttractionServiceImpl implements AttractionService {
 
         myAttraction.setVisitTime(LocalDateTime.now());
         myAttraction.setCount(1);
+        myAttraction.setAttraction(attraction);
         myAttractionRepository.save(myAttraction);
     }
 
