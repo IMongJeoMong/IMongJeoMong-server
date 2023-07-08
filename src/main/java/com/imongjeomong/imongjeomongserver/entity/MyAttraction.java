@@ -26,6 +26,7 @@ public class MyAttraction {
     @JoinColumn(name = "attraction_id")
     private Attraction attraction;
 
+    private int count;
     private LocalDateTime visitTime;
 
     public MyAttractionDTO toMyAttractionDto(){
@@ -43,6 +44,7 @@ public class MyAttraction {
                 .tel(this.getAttraction().getTel())
                 .gold(this.getAttraction().getGold())
                 .exp(this.getAttraction().getExp())
+                .count(this.getCount())
                 .visitTime(this.getVisitTime().format(DateTimeFormatter.ISO_DATE))
                 .build();
     }
