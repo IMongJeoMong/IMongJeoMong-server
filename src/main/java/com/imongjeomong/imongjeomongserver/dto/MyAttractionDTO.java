@@ -28,4 +28,6 @@ public class MyAttractionDTO {
     private boolean isWrote;
     private int count;
     private String visitTime;
+
+    private Long reviewId;
 }
