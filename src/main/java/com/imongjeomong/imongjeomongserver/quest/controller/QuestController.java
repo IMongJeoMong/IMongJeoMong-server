@@ -19,6 +19,9 @@ public class QuestController {
 
     private final QuestService questServiceImpl;
 
+    /**
+     * 일일 퀘스트 목록 조회
+     */
     @GetMapping("/daily")
     public DataResponse<?> getDailyQuestList(HttpServletRequest request) {
         DataResponse<List> dataResponse = new DataResponse<>(200, "일일 퀘스트 목록입니다.");
@@ -26,6 +29,9 @@ public class QuestController {
         return dataResponse;
     }
 
+    /**
+     * 퀘스트 보상 받기
+     */
     @PostMapping("/{myQuestId}")
     public CommonResponse getQuestReward(HttpServletRequest request, @PathVariable Long myQuestId) {
         CommonResponse response = new CommonResponse(200, "보상을 획득하였습니다.");

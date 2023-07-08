@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -75,7 +76,7 @@ public class AttractionServiceImpl implements AttractionService {
 
                     if (reviewRepository.findByAttractionIdAndMemberId(myAttraction.getAttraction().getId(), memberId).size() > 0) {
                         myAttractionDTO.setWrote(true);
-                    }else {
+                    } else {
                         myAttractionDTO.setWrote(false);
                     }
                     myAttractionList.add(myAttractionDTO);
@@ -143,7 +144,7 @@ public class AttractionServiceImpl implements AttractionService {
         AttractionDTO attractionDTO = attractionRepository.findByAttractionId(attractionId, lat, lng).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND)
         );
-        if (attractionDTO.getDistance() > 30) {
+        if (attractionDTO.getDistance() > 30000) {
             throw new CommonException(CustomExceptionStatus.ATTRACTION_SEARCH_FAILED);
         }
 
@@ -153,6 +154,19 @@ public class AttractionServiceImpl implements AttractionService {
         Attraction attraction = attractionRepository.findById(attractionId)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND));
 
+        // 하루가 안지났으면 예외처리
+        List<MyAttraction> myAttraction1 = myAttractionRepository.findMyAttractionByVisitTime(attractionId, memberId);
+        if (myAttraction1.size() != 0) {
+            MyAttraction cur = myAttraction1.get(0);
+            LocalDateTime visitedTime = cur.getVisitTime();
+
+            Duration duration = Duration.between(visitedTime, LocalDateTime.now());
+            if (duration.toHours() < 24) {
+                throw new CommonException(CustomExceptionStatus.ATTRACTION_NOT_A_DAY_PASSED);
+            }
+        }
+
+        // 로그 저장
         myAttraction.setVisitTime(LocalDateTime.now());
         myAttraction.setCount(1);
         myAttraction.setAttraction(attraction);
