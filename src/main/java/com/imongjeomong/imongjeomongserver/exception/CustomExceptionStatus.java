@@ -38,6 +38,7 @@ public enum CustomExceptionStatus {
     // 리뷰 관련 에러
     REVIEW_NOT_FOUND(-6500, "리뷰가 존재하지 않습니다."),
     REVIEW_MEMBER_NOT_MACHED(-6501, "리뷰작성자와 멤버가 다릅니다."),
+    REVIEW_ALREADY_EXIST(-6502, "리뷰가 이미 존재합니다."),
 
     // 관광지 관련 에러메시지
     ATTRACTION_NOT_FOUND(-7000, "관광지가 존재하지 않습니다."),

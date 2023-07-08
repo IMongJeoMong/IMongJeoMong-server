@@ -14,4 +14,8 @@ public interface ReviewService {
     void updateReview(Long memberId, Long reviewId, MultipartFile image, String content) throws IOException;
 
     void deleteReview(Long memberId, Long reviewId);
+
+    void saveReviewByMyAttractionId(ReviewDto reviewDto, MultipartFile image) throws IOException;
+
+    ReviewDto getReview(Long reviewId);
 }
