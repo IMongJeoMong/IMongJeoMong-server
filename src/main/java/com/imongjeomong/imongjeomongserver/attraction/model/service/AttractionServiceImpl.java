@@ -123,6 +123,7 @@ public class AttractionServiceImpl implements AttractionService {
                                                 throw new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND);
                                             }
                                     );
+                            visitAttraction.setCount(1);
                             visitAttraction.setVisitTime(LocalDateTime.now());
                             myAttractionRepository.save(visitAttraction);
                         }
@@ -153,6 +154,7 @@ public class AttractionServiceImpl implements AttractionService {
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND));
 
         myAttraction.setVisitTime(LocalDateTime.now());
+        myAttraction.setCount(1);
         myAttractionRepository.save(myAttraction);
     }
 
