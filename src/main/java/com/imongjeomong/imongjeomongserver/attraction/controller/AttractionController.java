@@ -53,7 +53,7 @@ public class AttractionController {
     /* 관광지 방문 */
     @PostMapping("/visit/{attractionId}")
     public CommonResponse visitAttraction(@PathVariable Long attractionId, @RequestParam Map<String, Object> paramMap, HttpServletRequest request) {
-        attractionService.visitAttraction(attractionId, request, paramMap);
+        attractionService.visitAttractionByLog(attractionId, request, paramMap);
         CommonResponse response = new CommonResponse(200, "방문 처리되었습니다.");
 
         questServiceImpl.attendAttraction(request);

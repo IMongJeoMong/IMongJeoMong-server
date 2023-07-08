@@ -18,4 +18,6 @@ public interface AttractionService {
     List<MyAttractionDTO> getMyAttractionList(HttpServletRequest request, Pageable pageable);
 
     void visitAttraction(Long attractionId, HttpServletRequest request, Map<String, Object> paramMap);
+
+    void visitAttractionByLog(Long attractionId, HttpServletRequest request, Map<String, Object> paramMap);
 }
