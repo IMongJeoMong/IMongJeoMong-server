@@ -35,6 +35,7 @@ public class QuestServiceImpl implements QuestService {
     public List<MyQuestDTO> getDailyQuestList(HttpServletRequest request) {
         String accessToken = getAccessToken(request);
         Long memberId = jwtUtil.getMemberId(accessToken);
+
         List<MyQuest> dailyQuestList = myQuestRepository.findAllByMemberId(memberId);
         List<MyQuestDTO> myQuestDTOList = new ArrayList<>();
         if (dailyQuestList.size() == 0) {
@@ -58,7 +59,7 @@ public class QuestServiceImpl implements QuestService {
             dailyQuestList.stream().forEach(value -> {
                 boolean clearFlag = false;
                 LocalDateTime today = LocalDateTime.now();
-                LocalDateTime today6h = today.withHour(6).withMinute(0).withSecond(0);
+                LocalDateTime today6h = today.withHour(0).withMinute(0).withSecond(0);
 
                 if (value.getClearTime() != null) {
                     clearFlag = value.getClearTime().isAfter(today6h);

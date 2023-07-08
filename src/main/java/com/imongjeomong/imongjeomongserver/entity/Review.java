@@ -32,6 +32,8 @@ public class Review {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "review")
     private List<ReviewImage> reviewImageList = new ArrayList<>();
 
+    private Long myAttractionId;
+
     @Embedded
     private EditTime editTime;
 }
