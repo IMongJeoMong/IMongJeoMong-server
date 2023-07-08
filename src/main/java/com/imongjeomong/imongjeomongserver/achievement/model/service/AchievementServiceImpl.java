@@ -7,12 +7,14 @@ import com.imongjeomong.imongjeomongserver.dto.AchievementDto;
 import com.imongjeomong.imongjeomongserver.entity.Achievement;
 import com.imongjeomong.imongjeomongserver.entity.Member;
 import com.imongjeomong.imongjeomongserver.entity.MyAchievement;
+import com.imongjeomong.imongjeomongserver.entity.MyQuest;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.exception.UnAuthenticationException;
 import com.imongjeomong.imongjeomongserver.item.model.repository.ItemRepository;
 import com.imongjeomong.imongjeomongserver.item.model.repository.MyItemRepository;
 import com.imongjeomong.imongjeomongserver.member.model.repository.MemberRepository;
+import com.imongjeomong.imongjeomongserver.quest.model.repository.MyQuestRepository;
 import com.imongjeomong.imongjeomongserver.review.model.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementRepository achievementRepository;
     private final MyAchievementRepository myAchievementRepository;
     private final MemberRepository memberRepository;
+    private final MyQuestRepository myQuestRepository;
 
     private final MyAttractionRepository myAttractionRepository;
     private final ReviewRepository reviewRepository;
@@ -56,10 +59,9 @@ public class AchievementServiceImpl implements AchievementService {
                 .orElseThrow(() -> new UnAuthenticationException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
 
         // 1. 출석하기
-        /*
-        (출석 카운트는 현재 임시로 넣어놓음 -> 추후 출석 로그 테이블 생성 후 변경 필요)
-         */
-        Long attendCount = 1L;
+        Optional<MyQuest> myQuest = myQuestRepository.findByMemberIdAndQuestId(memberId, 1L);
+        Long attendCount = myQuest.map(quest -> (long) quest.getCount()).orElse(1L);
+
 
         // 2. 방문한 관광지 개수
         Long attractionCount = myAttractionRepository.countByMemberId(memberId);
