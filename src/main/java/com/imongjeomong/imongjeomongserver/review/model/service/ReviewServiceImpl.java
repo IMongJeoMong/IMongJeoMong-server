@@ -41,7 +41,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void saveReview(ReviewDto reviewDto, MultipartFile image) throws IOException {
-        String imageUrl = awsS3Util.s3SaveFile(image);
+        String imageUrl = "";
+        if (image != null) {
+            imageUrl = awsS3Util.s3SaveFile(image);
+        }
 
         // db 에 저장할 데이터 조회
         Attraction attraction = attractionRepository.findById(reviewDto.getAttractionId())
@@ -141,7 +144,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void saveReviewByMyAttractionId(ReviewDto reviewDto, MultipartFile image) throws IOException {
-        String imageUrl = awsS3Util.s3SaveFile(image);
+        String imageUrl = "";
+        if (image != null) {
+            imageUrl = awsS3Util.s3SaveFile(image);
+        }
 
         // db 에 저장할 데이터 조회
         Attraction attraction = attractionRepository.findById(reviewDto.getAttractionId())
