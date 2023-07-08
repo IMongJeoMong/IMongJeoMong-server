@@ -99,7 +99,6 @@ public class AttractionServiceImpl implements AttractionService {
             throw new CommonException(CustomExceptionStatus.ATTRACTION_SEARCH_FAILED);
         }
 
-
         myAttractionRepository.findByMemberIdAndAttractionId(memberId, attractionId)
                 .ifPresentOrElse(
                         value -> { // 이미 방문한 적 있을 경우
@@ -116,7 +115,6 @@ public class AttractionServiceImpl implements AttractionService {
                         () -> { // 첫 방문일 경우
                             MyAttraction visitAttraction = new MyAttraction();
                             visitAttraction.setMemberId(memberId);
-                            visitAttraction.setCount(1);
 
                             attractionRepository.findById(attractionId).
                                     ifPresentOrElse(
@@ -129,6 +127,33 @@ public class AttractionServiceImpl implements AttractionService {
                             myAttractionRepository.save(visitAttraction);
                         }
                 );
+    }
+
+    @Transactional
+    @Override
+    public void visitAttractionByLog(Long attractionId, HttpServletRequest request, Map<String, Object> paramMap) {
+        // 유저 정보 파싱
+        String accessToken = getAccessToken(request);
+        Long memberId = jwtUtil.getMemberId(accessToken);
+
+        // 30m 이내가 아니라면 방문 실패 예외처리
+        Double lat = Double.parseDouble(paramMap.get("lat").toString());
+        Double lng = Double.parseDouble(paramMap.get("lng").toString());
+        AttractionDTO attractionDTO = attractionRepository.findByAttractionId(attractionId, lat, lng).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND)
+        );
+        if (attractionDTO.getDistance() > 30) {
+            throw new CommonException(CustomExceptionStatus.ATTRACTION_SEARCH_FAILED);
+        }
+
+        // 방문처리 - DB에 로그 추가
+        MyAttraction myAttraction = new MyAttraction();
+        myAttraction.setMemberId(memberId);
+        Attraction attraction = attractionRepository.findById(attractionId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND));
+
+        myAttraction.setVisitTime(LocalDateTime.now());
+        myAttractionRepository.save(myAttraction);
     }
 
     /* 헤더 Authorization 파싱 */
