@@ -60,6 +60,35 @@ public class ReviewController {
         return new CommonResponse(200, "리뷰 저장 성공");
     }
 
+    @PostMapping("/review/{myAttractionId}")
+    public CommonResponse writeReviewByMyAttractionId(HttpServletRequest request, @PathVariable Long myAttractionId,
+                                                      @ModelAttribute MultipartFile image, Long attractionId, String content) throws IOException {
+        String accessToken = "";
+        Long memberId = null;
+        try {
+            accessToken = request.getHeader("Authorization").split(" ")[1];
+            memberId = jwtUtil.getMemberId(accessToken);
+        } catch (NullPointerException e) {
+            throw new CommonException(CustomExceptionStatus.TOKEN_DOES_NOT_EXISTS);
+        }
+
+        // 입력값을 reviewDto로 변환 후 서비스로 전달
+        ReviewDto reviewDto = ReviewDto.builder()
+                .memberId(memberId)
+                .attractionId(attractionId)
+                .content(content)
+                .myAttractionId(myAttractionId)
+                .build();
+
+        reviewService.saveReviewByMyAttractionId(reviewDto, image);
+
+        // 리뷰 작성 퀘스트
+        questServiceImpl.writeReviewQuest(memberId);
+
+        return new CommonResponse(200, "리뷰 저장 성공");
+    }
+
+
     /**
      * review 가져오기 (R)
      */
@@ -70,6 +99,15 @@ public class ReviewController {
         DataResponse<List<ReviewDto>> response = new DataResponse<>(200, "리뷰 리스트 조회 성공");
         response.setData(reviewDtoList);
 
+        return response;
+    }
+
+    @GetMapping("/review/id/{reviewId}")
+    public DataResponse<?> getReview(@PathVariable Long reviewId) {
+        ReviewDto review = reviewService.getReview(reviewId);
+
+        DataResponse<ReviewDto> response = new DataResponse<>(200, "리뷰 리스트 조회 성공");
+        response.setData(review);
         return response;
     }
 

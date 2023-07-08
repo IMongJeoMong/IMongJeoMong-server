@@ -17,6 +17,7 @@ public class ReviewDto {
 
     private Long memberId;
     private Long attractionId;
+    private Long myAttractionId;
     private String memberName;
 
     private String content;

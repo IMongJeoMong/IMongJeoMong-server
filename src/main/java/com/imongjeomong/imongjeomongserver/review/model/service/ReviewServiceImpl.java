@@ -138,4 +138,54 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
 
+    @Override
+    @Transactional
+    public void saveReviewByMyAttractionId(ReviewDto reviewDto, MultipartFile image) throws IOException {
+        String imageUrl = awsS3Util.s3SaveFile(image);
+
+        // db 에 저장할 데이터 조회
+        Attraction attraction = attractionRepository.findById(reviewDto.getAttractionId())
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND));
+        Member member = memberRepository.findById(reviewDto.getMemberId())
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.AUTHENTICATION_MEMBER_IS_NULL));
+
+        List<Review> reviewList = reviewRepository.findByMyAttractionIdAndMemberId(reviewDto.getMyAttractionId(), reviewDto.getMemberId());
+        if (reviewList.size() > 0) throw new CommonException(CustomExceptionStatus.REVIEW_ALREADY_EXIST);
+
+        // Review 저장
+        Review review = new Review();
+        review.setAttraction(attraction);
+        review.setMember(member);
+        review.setContent(reviewDto.getContent());
+        EditTime editTime = new EditTime();
+        editTime.setCreateTime(LocalDateTime.now());
+        review.setEditTime(editTime);
+        review.setMyAttractionId(reviewDto.getMyAttractionId());
+        reviewRepository.save(review);
+
+        // Review Image 저장
+        ReviewImage reviewImage = new ReviewImage();
+        reviewImage.setReview(review);
+        reviewImage.setImagePath(imageUrl);
+        reviewImageRepository.save(reviewImage);
+    }
+
+    @Override
+    @Transactional
+    public ReviewDto getReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.REVIEW_NOT_FOUND));
+
+        return ReviewDto.builder()
+                .reviewId(review.getId())
+                .memberId(review.getMember().getId())
+                .memberName(review.getMember().getNickname())
+                .attractionId(review.getAttraction().getId())
+                .myAttractionId(review.getMyAttractionId())
+                .imagePath(review.getReviewImageList().get(0).getImagePath())
+                .content(review.getContent())
+                .createTime(review.getEditTime().getCreateTime())
+                .build();
+    }
+
 }
