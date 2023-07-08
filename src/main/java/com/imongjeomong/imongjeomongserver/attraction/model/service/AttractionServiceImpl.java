@@ -6,6 +6,7 @@ import com.imongjeomong.imongjeomongserver.dto.AttractionDTO;
 import com.imongjeomong.imongjeomongserver.dto.MyAttractionDTO;
 import com.imongjeomong.imongjeomongserver.entity.Attraction;
 import com.imongjeomong.imongjeomongserver.entity.MyAttraction;
+import com.imongjeomong.imongjeomongserver.entity.Review;
 import com.imongjeomong.imongjeomongserver.exception.CommonException;
 import com.imongjeomong.imongjeomongserver.exception.CustomExceptionStatus;
 import com.imongjeomong.imongjeomongserver.review.model.repository.ReviewRepository;
@@ -73,8 +74,9 @@ public class AttractionServiceImpl implements AttractionService {
         myAttractionRepository.findAllByMemberId(memberId, pageable).stream().forEach(
                 myAttraction -> {
                     MyAttractionDTO myAttractionDTO = myAttraction.toMyAttractionDto();
-
-                    if (reviewRepository.findByAttractionIdAndMemberId(myAttraction.getAttraction().getId(), memberId).size() > 0) {
+                    List<Review> reviewList = reviewRepository.findByMyAttractionIdAndMemberId(myAttraction.getId(), memberId);
+                    if (reviewList.size() > 0) {
+                        myAttractionDTO.setReviewId(reviewList.get(0).getId());
                         myAttractionDTO.setWrote(true);
                     } else {
                         myAttractionDTO.setWrote(false);
