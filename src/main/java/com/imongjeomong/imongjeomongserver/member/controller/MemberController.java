@@ -23,6 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class MemberController {
 
     private final MemberService memberServiceImpl;

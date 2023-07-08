@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class ReviewController {
 
     private final ReviewService reviewService;
