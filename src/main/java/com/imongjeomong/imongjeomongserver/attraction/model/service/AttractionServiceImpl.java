@@ -98,7 +98,7 @@ public class AttractionServiceImpl implements AttractionService {
         AttractionDTO attractionDTO = attractionRepository.findByAttractionId(attractionId, lat, lng).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND)
         );
-        if (attractionDTO.getDistance() > 30) {
+        if (attractionDTO.getDistance() > 30000) {
             throw new CommonException(CustomExceptionStatus.ATTRACTION_SEARCH_FAILED);
         }
 
@@ -146,7 +146,7 @@ public class AttractionServiceImpl implements AttractionService {
         AttractionDTO attractionDTO = attractionRepository.findByAttractionId(attractionId, lat, lng).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.ATTRACTION_NOT_FOUND)
         );
-        if (attractionDTO.getDistance() > 30) {
+        if (attractionDTO.getDistance() > 30000) {
             throw new CommonException(CustomExceptionStatus.ATTRACTION_SEARCH_FAILED);
         }
 
