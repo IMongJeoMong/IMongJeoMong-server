@@ -31,7 +31,7 @@ public class JwtUtil {
 
     public String createAccessToken(Long memberId) {
         LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime expirationTime = currentTime.plus(30, ChronoUnit.MINUTES);
+        LocalDateTime expirationTime = currentTime.plus(30, ChronoUnit.DAYS);
         ZoneId zoneId = ZoneId.systemDefault();
         ZonedDateTime zonedDateTime = expirationTime.atZone(zoneId);
         Date expirationDate = Date.from(zonedDateTime.toInstant());
