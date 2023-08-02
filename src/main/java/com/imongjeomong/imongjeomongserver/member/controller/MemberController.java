@@ -132,7 +132,7 @@ public class MemberController {
     }
 
     /* 토큰 재발급 */
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public DataResponse<?> refreshToken(HttpServletRequest request){
         String refreshToken = getAccessToken(request);
         jwtUtil.checkToken(refreshToken);
