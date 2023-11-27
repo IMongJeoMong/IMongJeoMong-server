@@ -1,0 +1,47 @@
+server:
+  port: 8800
+  ssl:
+    key-store: { key-store-path }
+    key-store-type: { key-store-type }
+    key-store-password: { key-store-password }
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: { mysql-url }
+    username: { mysql-username }
+    password: { mysql-password }
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate  # 변경사항 자동반영 (create 금지)
+    properties:
+      hibernate:
+        format_sql: true
+
+openData:
+  tasu:
+    serviceKey: { tasu-serviceKey }
+  parkingLot:
+    serviceKey: { parkingLot-serviceKey }
+  attraction:
+    serviceKey: { attraction-serviceKey }
+
+naver:
+  clientId: { naver-clientId }
+  clientSecret: { naver-clientSecret}
+  url: https://openapi.naver.com/v1/search/blog.json
+
+cloud:
+  aws:
+    credentials:
+      access-key: { aws-access-key }
+      secret-key: { aws-secret-key }
+    s3:
+      bucket: { aws-s3-bucket-name }
+    region:
+      static: { aws-region-static }
+    stack:
+      auto: false
